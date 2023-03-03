@@ -23,6 +23,7 @@ public class RT : MonoBehaviour
     RenderTexture[] rts;
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
+        Graphics.Blit(source, destination);
         if (takePhoto) return;
         takePhoto = true;
         Debug.Log($"---------------------- takePhoto {takePhoto}");
@@ -64,15 +65,31 @@ public class RT : MonoBehaviour
         Debug.Log("GC");
     }
 
+    public void OnDestroyImageRootClick()
+    {
+        if (RawImages[0] != null)
+            Destroy(RawImages[0].transform.parent.gameObject);
+    }
+
     public void OnDestroyImageClick()
     {
         for (int i = 0; i < RawImages.Length; i++)
         {
-            //Destroy(RawImages[i]);
+            Destroy(RawImages[i]);
             rts[i]?.Release();
         }
         //RawImages = null;
-        //rts= null;
+        //rts = null;
         //this.enabled = false;
+    }
+
+    public void OnReleaseTempRTClick()
+    {
+        // 直接new的不能release
+        for (int i = 0; i < rts.Length - 1; i++)
+        {
+            RenderTexture.ReleaseTemporary(rts[i]);
+        }
+       
     }
 }
