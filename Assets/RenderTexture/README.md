@@ -12,7 +12,6 @@ RenderTexture 用完一定要Release</br>
 </br>
 在内部，Unity 保留一个临时渲染纹理池， 因此调用 GetTemporary 通常只是直接返回一个已创建的渲染纹理（如果大小和格式匹配）。 如果若干帧都不使用这些临时渲染纹理，才将它们实际销毁。</br>
 所以，如果频繁调用的地步建议使用RenderTexture.GetTemporary()接口
-
 </br></br>
 ### new RenderTexture()
 直接new的RT实力名字默认为空，debug模式下建议给rt取个名字，方便辨识 </br>
