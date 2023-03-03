@@ -5,7 +5,7 @@
 </br></br>
 ### RenderTexture.GetTemporary()
 如果通过RenderTexture.GetTemporary()获取的rt，rt名默认也是 "TempBuffer 1 1080x1920"  (数字是rt尺寸) </br>
-为了识别未释放rt，debug模式下建议给rt取个名字
+为了识别未释放rt，debug模式下建议给rt取个名字</br>
 RenderTexture 用完一定要Release</br>
 new出来的用 rt.Release();</br>
 通过RenderTexture.GetTemporary()获取的调用RenderTexture.ReleaseTemporary(rt); </br>
