@@ -19,5 +19,5 @@ new出来的用 rt.Release();释放</br>
 
 
 ### 抗锯齿
-开启maas 会多一个Camera.ImageEffects的drawcall，也会多一张全屏的RT
-![image maas](maas.jpeg)
+开启msaa 会多一个Camera.ImageEffects的drawcall，也会多一张全屏的RT
+![image msaa](msaa.jpeg)
