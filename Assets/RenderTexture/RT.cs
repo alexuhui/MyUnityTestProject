@@ -29,7 +29,13 @@ public class RT : MonoBehaviour
         Camera.main.targetTexture = rts[1];
         yield return new WaitForSeconds(0.1f);
 
+        rts[2] = RenderTexture.active;
+        RawImages[2].texture = rts[2];
+        Camera.main.targetTexture = rts[2];
+
         Camera.main.targetTexture = null;
+
+        
     }
 
     // Update is called once per frame
