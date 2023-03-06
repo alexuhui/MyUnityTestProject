@@ -16,3 +16,8 @@ RenderTexture 用完一定要Release</br>
 ### new RenderTexture()
 直接new的RT实力名字默认为空，debug模式下建议给rt取个名字，方便辨识 </br>
 new出来的用 rt.Release();释放</br>
+
+
+### 抗锯齿
+开启maas 会多一个Camera.ImageEffects的drawcall，也会多一张全屏的RT
+![image text](maas.jpeg)
