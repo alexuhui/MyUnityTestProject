@@ -11,6 +11,8 @@ public class RT : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Camera.main.forceIntoRenderTexture = false;
+        Debug.Log($"QualitySettings.antiAliasing ----------- {QualitySettings.antiAliasing}");
         StartCoroutine("Delay");
     }
 
