@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/IMGUI/IMGUI.unity
+    guid: 50fc1d43075db984da63c3cbbdcafc16
+  - enabled: 1
+    path: Assets/FindObjTest/FindObjTest.unity
+    guid: 1d65e62a43686cb408ff4db8095d3fd7
+  - enabled: 1
+    path: Assets/FindObjTest/FindObjTestLoad.unity
+    guid: 323a14211dbb53141a5cb0c309d716f9
   m_configObjects: {}
