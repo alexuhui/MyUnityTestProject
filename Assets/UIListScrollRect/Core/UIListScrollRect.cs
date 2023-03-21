@@ -120,16 +120,16 @@ public class UIListScrollRect : ScrollRect
         switch (m_Layout)
         {
             case UIListViewLayout.Horizontal:
-                m_ListLayout = new UIListHorizontalLayout();
+                m_ListLayout = new UIListLayout_Horizontal();
                 break;
             case UIListViewLayout.Vertical:
-                m_ListLayout = new UIListVerticalLayout();
+                m_ListLayout = new UIListLayout_Vertical();
                 break;
             case UIListViewLayout.GridHorizontal:
-                m_ListLayout = new UIListGridHorizontalLayout();
+                m_ListLayout = new UIListLayout_GridHorizontal();
                 break;
             case UIListViewLayout.GridVertical:
-                m_ListLayout = new UIListGridVerticalLayout();
+                m_ListLayout = new UIListLayout_GridVertical();
                 break;
             default:
                 Debug.LogError($"layout not exit {m_Layout}");
