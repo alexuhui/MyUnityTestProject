@@ -31,10 +31,11 @@ public static partial class UIListEx
         }
     }
 
-    public static int GetGetColumnCountEx()
+    public static void UpdateSizeEx<T>(this T layout, int startIndex, int endIndex) where T : UIListLayout
     {
-        return 2;
+        for (int i = startIndex; i <= endIndex; i++)
+        {
+            layout.m_ItemInfos[i].UpdateSize();
+        }
     }
-
-
 }

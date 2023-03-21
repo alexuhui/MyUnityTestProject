@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static partial class UIListEx
 {
-    public static (bool, bool) InitContentVerticalEx<T>(this T verticalLayout, RectTransform content,     
+    public static (bool, bool) InitContentVerticalEx<T>(this T verticalLayout, RectTransform content,
         bool isMirror = false) where T : UIListLayout
     {
         bool vertical = true;
@@ -31,7 +31,7 @@ public static partial class UIListEx
         content.anchoredPosition = new Vector2(content.anchoredPosition.x, 0);
     }
 
-    public static void ScrollToItemVerticalEx<T>(this T layout,int index) where T : UIListLayout
+    public static void ScrollToItemVerticalEx<T>(this T layout, int index) where T : UIListLayout
     {
         float tempSize = layout.m_Padding.top;
         for (int i = 0; i < index; i++)
@@ -94,5 +94,16 @@ public static partial class UIListEx
         padding.bottom = Mathf.RoundToInt(startPos);
 
         return padding;
+    }
+
+    public static Vector2 GetAnchorVerticalEx<T>(this T layout) where T : UIListLayout
+    {
+        return layout.m_IsMirror ? new Vector2(0, 0) : new Vector2(0, 1);
+    }
+
+    public static void ResetPosVerticalEx<T>(this T layout) where T : UIListLayout
+    { 
+        var content = layout.m_Content;
+        content.sizeDelta = new Vector2(content.sizeDelta.x, 0);
     }
 }

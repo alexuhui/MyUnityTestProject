@@ -61,7 +61,6 @@ public class UIListItemRender : UIBehaviour
     {
         var obj = GameObject.Instantiate(gameObject);
         UIListItemRender item = obj.GetComponent<UIListItemRender>();
-
         return item;
     }
 

@@ -28,7 +28,6 @@ public class UIListScrollRect : ScrollRect
     private bool m_IsScrollOnUpdateEnd;
     private int m_ScrollToIndex;
 
-    private RectOffset m_RealPadding;
     private List<ItemDataBase> m_Datas = new List<ItemDataBase>();
     private List<UIListItemInfo> m_ItemInfos = new List<UIListItemInfo>();
     private List<UIListItemRender> m_Renders = new List<UIListItemRender>();
@@ -81,7 +80,7 @@ public class UIListScrollRect : ScrollRect
         if (m_IsUpdateSize)
         {
             m_IsUpdateSize = false;
-            UpdateSize();
+            UpdateItemSize();
         }
         base.LateUpdate();
     }
@@ -113,7 +112,7 @@ public class UIListScrollRect : ScrollRect
 
         Layout = m_Layout;
         onValueChanged.AddListener(OnScrollRectValueChange);
-        ResetHelper();
+        ResetLayout();
         InitDefSize();
     }
 
@@ -130,7 +129,7 @@ public class UIListScrollRect : ScrollRect
         }
     }
 
-    private void ResetHelper()
+    private void ResetLayout()
     {
         switch (m_Layout)
         {
@@ -138,7 +137,7 @@ public class UIListScrollRect : ScrollRect
                 m_ListLayout = new UIListHorizontalLayout();
                 break;
             case UIListViewLayout.Vertical:
-                m_ListLayout = new UIListGridVerticalLayout();
+                m_ListLayout = new UIListVerticalLayout();
                 break;
             case UIListViewLayout.GridHorizontal:
                 m_ListLayout = new UIListGridHorizontalLayout();
@@ -319,11 +318,9 @@ public class UIListScrollRect : ScrollRect
             return;
         m_StartIndex = startIndex;
         m_EndIndex = endIndex;
+        m_ListLayout.SetRealPadding(startIndex, endIndex);
         CacheItems();
-        RetSetItemsData();
-        m_RealPadding = m_ListLayout.GetRealPadding(startIndex, endIndex);
-        
-
+        RetsetItemsData();
         InvalidateSize();
     }
 
@@ -331,52 +328,26 @@ public class UIListScrollRect : ScrollRect
     private UIListItemRender CreateItem(bool bInit = true)
     {
         UIListItemRender render = ItemPrefab.Clone();
-        Vector2 v2 = Vector2.zero;
-        switch (Layout)
-        {
-            case UIListViewLayout.Vertical:
-                v2 = m_IsMirror ? new Vector2(0, 0) : new Vector2(0, 1);
-                break;
-            case UIListViewLayout.Horizontal:
-                v2 = m_IsMirror ? new Vector2(1, 1) : new Vector2(0, 1);
-                break;
-            case UIListViewLayout.GridVertical:
-            case UIListViewLayout.GridHorizontal:
-                v2 = new Vector2(0, 1);
-                break;
-        }
-
-        render.rectTransform.pivot = render.rectTransform.anchorMin = render.rectTransform.anchorMax = v2;
+        render.rectTransform.pivot = 
+            render.rectTransform.anchorMin = 
+            render.rectTransform.anchorMax = m_ListLayout.GetAnchor();
 
         render.rectTransform.SetParent(content);
         render.rectTransform.localScale = Vector3.one;
         render.rectTransform.localRotation = Quaternion.identity;
         render.rectTransform.localPosition = Vector3.zero;
         render.OnRectSizeChange = InvalidateSize;
-
         return render;
     }
 
-    private void OnClickItem(GameObject obj, PointerEventData eventData)
+    private void UpdateItemSize()
     {
-        SetSelect(obj.GetComponent<UIListItemRender>().Index);
-    }
-
-    private void UpdateSize()
-    {
-        if (Layout != UIListViewLayout.GridVertical && Layout != UIListViewLayout.GridHorizontal)
-            for (int i = m_StartIndex; i <= m_EndIndex; i++)
-            {
-                if (i >= m_Datas.Count)
-                    continue;
-
-                m_ItemInfos[i].UpdateSize();
-            }
+        m_ListLayout.UpdateItemSize(m_StartIndex, m_EndIndex);
 
         if (m_Datas.Count > 0)
-            UpdatePos();
+            m_ListLayout.RefreshContentPos(m_StartIndex, m_EndIndex);
         else
-            RestPos();
+            m_ListLayout.ResetContentPos();
 
         if (m_IsScrollOnUpdateEnd)
         {
@@ -385,128 +356,7 @@ public class UIListScrollRect : ScrollRect
         }
     }
 
-    private void RestPos()
-    {
-        switch (Layout)
-        {
-            case UIListViewLayout.GridVertical:
-            case UIListViewLayout.Vertical:
-                content.sizeDelta = new Vector2(content.sizeDelta.x, 0);
-                break;
-            case UIListViewLayout.GridHorizontal:
-            case UIListViewLayout.Horizontal:
-                content.sizeDelta = new Vector2(0, content.sizeDelta.y);
-                break;
-        }
-    }
-
-    private void UpdatePos()
-    {
-        switch (Layout)
-        {
-            case UIListViewLayout.Vertical:
-                {
-                    for (int i = m_StartIndex; i <= m_EndIndex; i++)
-                    {
-                        UIListItemInfo itemInfo = m_ItemInfos[i];
-                        RectTransform rectTransform = itemInfo.render.rectTransform;
-                        if (i == m_StartIndex)
-                            rectTransform.anchoredPosition = m_IsMirror ? new Vector2(m_Padding.left, m_RealPadding.top) : new Vector2(m_Padding.left, -m_RealPadding.top);
-                        else
-                        {
-                            UIListItemInfo tempItemInfo = m_ItemInfos[i - 1];
-                            RectTransform tempRectTransform = tempItemInfo.render.rectTransform;
-                            rectTransform.anchoredPosition = m_IsMirror ? new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y + tempItemInfo.size.y + m_Spacing.y) : new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y - tempItemInfo.size.y - m_Spacing.y);
-                        }
-                    }
-                    UIListItemInfo lastItemInfo = m_ItemInfos[m_EndIndex];
-                    RectTransform lastRectTransform = lastItemInfo.render.rectTransform;
-                    float height = m_IsMirror ? lastRectTransform.anchoredPosition.y + lastItemInfo.size.y + m_RealPadding.bottom : -lastRectTransform.anchoredPosition.y + lastItemInfo.size.y + m_RealPadding.bottom;
-                 
-                    content.sizeDelta = new Vector2(content.sizeDelta.x, height);
-                }
-                break;
-            case UIListViewLayout.Horizontal:
-                {
-                    for (int i = m_StartIndex; i <= m_EndIndex; i++)
-                    {
-                        UIListItemInfo itemInfo = m_ItemInfos[i];
-                        RectTransform rectTransform = itemInfo.render.rectTransform;
-                        if (i == m_StartIndex)
-                            rectTransform.anchoredPosition = m_IsMirror ? new Vector2(-m_RealPadding.left, -m_RealPadding.top) : new Vector2(m_RealPadding.left, -m_RealPadding.top);
-                        else
-                        {
-                            UIListItemInfo tempItemInfo = m_ItemInfos[i - 1];
-                            RectTransform tempRectTransform = tempItemInfo.render.rectTransform;
-                            rectTransform.anchoredPosition = m_IsMirror ? new Vector2(tempRectTransform.anchoredPosition.x - tempItemInfo.size.x - m_Spacing.x, -m_RealPadding.top) : new Vector2(tempRectTransform.anchoredPosition.x + tempItemInfo.size.x + m_Spacing.x, -m_RealPadding.top);
-                        }
-                    }
-                    UIListItemInfo lastItemInfo = m_ItemInfos[m_EndIndex];
-                    RectTransform lastRectTransform = lastItemInfo.render.rectTransform;
-                    float width = m_IsMirror ? -lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right : lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right;
-                   
-                    content.sizeDelta = new Vector2(width, content.sizeDelta.y);
-                }
-                break;
-            case UIListViewLayout.GridVertical:
-                {
-                    for (int i = m_StartIndex; i <= m_EndIndex; i++)
-                    {
-                        UIListItemInfo itemInfo = m_ItemInfos[i];
-                        RectTransform rectTransform = itemInfo.render.rectTransform;
-                        if (i == m_StartIndex)
-                        {
-                            rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_RealPadding.top);
-                        }
-                        else
-                        {
-                            int index = i + 1;
-                            UIListItemInfo tempItemInfo = m_ItemInfos[i - 1];
-                            RectTransform tempRectTransform = tempItemInfo.render.rectTransform;
-                            if ((i + 1) % m_ColCount == 1)
-                                rectTransform.anchoredPosition = new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y - tempItemInfo.size.y - m_Spacing.y);
-                            else
-                                rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x + tempItemInfo.size.x + m_Spacing.x, tempRectTransform.anchoredPosition.y);
-                        }
-                    }
-                    UIListItemInfo lastItemInfo = m_ItemInfos[m_EndIndex];
-                    RectTransform lastRectTransform = lastItemInfo.render.rectTransform;
-
-                    float width = m_ColCount * lastItemInfo.size.x + (m_ColCount - 1) * m_Spacing.x + m_RealPadding.left + m_RealPadding.right;//m_IsMirror ? -lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right : lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right;
-                    
-                    content.sizeDelta = new Vector2(content.sizeDelta.x, -lastRectTransform.anchoredPosition.y + lastItemInfo.size.y + m_RealPadding.bottom);
-                }
-                break;
-            case UIListViewLayout.GridHorizontal:
-                {
-                    for (int i = m_StartIndex; i <= m_EndIndex; i++)
-                    {
-                        UIListItemInfo itemInfo = m_ItemInfos[i];
-                        RectTransform rectTransform = itemInfo.render.rectTransform;
-                        if (i == m_StartIndex)
-                        {
-                            rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_RealPadding.top);
-                        }
-                        else
-                        {
-                            int index = i + 1;
-                            UIListItemInfo tempItemInfo = m_ItemInfos[i - 1];
-                            RectTransform tempRectTransform = tempItemInfo.render.rectTransform;
-                            if (i % m_ColCount == 0)
-                                rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x + DefSize.x + m_Spacing.x, -m_Padding.top);
-                            else
-                                rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x, tempRectTransform.anchoredPosition.y - DefSize.y - m_Spacing.y);
-                        }
-                    }
-                    UIListItemInfo lastItemInfo = m_ItemInfos[m_EndIndex];
-                    RectTransform lastRectTransform = lastItemInfo.render.rectTransform;
-                    content.sizeDelta = new Vector2(lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right, content.sizeDelta.y);
-                }
-                break;
-        }
-    }
-
-    private void RetSetItemsData()
+    private void RetsetItemsData()
     {
         for (int i = m_StartIndex; i <= m_EndIndex; i++)
         {
@@ -530,7 +380,6 @@ public class UIListScrollRect : ScrollRect
                 }
 
                 render.name = i.ToString();
-                //render.m_index = i;
                 m_ItemInfos[i].render = render;
 
                 render.SetData(m_Datas[i]);
@@ -585,6 +434,11 @@ public class UIListScrollRect : ScrollRect
             m_Renders.Add(render);
             itemInfo.render = null;
         }
+    }
+
+    private void OnClickItem(GameObject obj, PointerEventData eventData)
+    {
+        SetSelect(obj.GetComponent<UIListItemRender>().Index);
     }
 
 #if UNITY_EDITOR

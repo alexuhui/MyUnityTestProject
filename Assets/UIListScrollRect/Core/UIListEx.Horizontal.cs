@@ -96,4 +96,15 @@ public static partial class UIListEx
         padding.right = Mathf.RoundToInt(startPos);
         return padding;
     }
+
+    public static Vector2 GetAnchorHorizontalEx<T>(this T layout) where T : UIListLayout
+    {
+        return layout.m_IsMirror ? new Vector2(1, 1) : new Vector2(0, 1);
+    }
+
+    public static void ResetPosHorizontalEx<T>(this T layout) where T : UIListLayout
+    {
+        var content = layout.m_Content;
+        content.sizeDelta = new Vector2(0, content.sizeDelta.y);
+    }
 }

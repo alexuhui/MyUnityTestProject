@@ -41,4 +41,9 @@ public static partial class UIListEx
 
         layout.m_Content.anchoredPosition = new Vector2(layout.m_Content.anchoredPosition.x, layout.m_IsMirror ? -tempSize : tempSize);
     }
+
+    public static Vector2 GetAnchorGridEx<T>(this T layout) where T : UIListLayout
+    {
+        return new Vector2(0, 1);
+    }
 }
