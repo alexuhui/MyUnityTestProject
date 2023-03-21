@@ -82,4 +82,27 @@ public class UIListGridVerticalLayout : UIListLayout
 
         m_Content.sizeDelta = new Vector2(m_Content.sizeDelta.x, -lastRectTransform.anchoredPosition.y + lastItemInfo.size.y + m_RealPadding.bottom);
     }
+
+#if UNITY_EDITOR
+    public override void Preview()
+    {
+        for (int i = 0; i < m_Content.childCount; i++)
+        {
+            RectTransform rectTransform = m_Content.GetChild(i).GetComponent<RectTransform>();
+            rectTransform.pivot = 
+                rectTransform.anchorMin = 
+                rectTransform.anchorMax = new Vector2(0, 1);
+            if (i == 0)
+                rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_Padding.top);
+            else
+            {
+                RectTransform tempRectTransform = m_Content.GetChild(i - 1).GetComponent<RectTransform>();
+                if ((i + 1) % m_ColCnt == 1)
+                    rectTransform.anchoredPosition = new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y - tempRectTransform.rect.size.y - m_Spacing.y);
+                else
+                    rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x + tempRectTransform.rect.size.x + m_Spacing.x, tempRectTransform.anchoredPosition.y);
+            }
+        }
+    }
+#endif
 }

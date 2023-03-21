@@ -34,4 +34,10 @@ public abstract class UIListLayout
     public virtual void UpdateItemSize(int startIndex, int endIndex) { }
     public abstract void ResetContentPos();
     public abstract void RefreshContentPos(int startIndex, int endIndex);
+
+
+
+#if UNITY_EDITOR
+    public abstract void Preview();
+#endif
 }

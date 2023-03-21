@@ -78,4 +78,29 @@ public class UIListGridHorizontalLayout : UIListLayout
         RectTransform lastRectTransform = lastItemInfo.render.rectTransform;
         m_Content.sizeDelta = new Vector2(lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right, m_Content.sizeDelta.y);
     }
+
+#if UNITY_EDITOR
+    public override void Preview()
+    {
+        for (int i = 0; i < m_Content.childCount; i++)
+        {
+            RectTransform rectTransform = m_Content.GetChild(i).GetComponent<RectTransform>();
+            rectTransform.pivot = 
+                rectTransform.anchorMin = 
+                rectTransform.anchorMax = new Vector2(0, 1);
+            if (i == 0)
+            {
+                rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_Padding.top);
+            }
+            else
+            {
+                RectTransform tempRectTransform = m_Content.GetChild(i - 1).GetComponent<RectTransform>();
+                if (i % m_ColCnt == 0)
+                    rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x + tempRectTransform.rect.size.x + m_Spacing.x, -m_Padding.top);
+                else
+                    rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x, tempRectTransform.anchoredPosition.y - tempRectTransform.rect.size.y - m_Spacing.y);
+            }
+        }
+    }
+#endif
 }

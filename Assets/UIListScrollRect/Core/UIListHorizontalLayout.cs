@@ -82,4 +82,29 @@ public class UIListHorizontalLayout : UIListLayout
 
         m_Content.sizeDelta = new Vector2(width, m_Content.sizeDelta.y);
     }
+
+#if UNITY_EDITOR
+    public override void Preview()
+    {
+        for (int i = 0; i < m_Content.childCount; i++)
+        {
+            RectTransform rectTransform = m_Content.GetChild(i).GetComponent<RectTransform>();
+            rectTransform.pivot = 
+                rectTransform.anchorMin = 
+                rectTransform.anchorMax = m_IsMirror ? new Vector2(1, 1) : new Vector2(0, 1);
+
+            if (i == 0)
+            {
+                rectTransform.anchoredPosition = m_IsMirror ? new Vector2(-m_Padding.right, -m_Padding.top) : new Vector2(m_Padding.left, -m_Padding.top);
+            }
+            else
+            {
+                RectTransform tempRectTransform = m_Content.GetChild(i - 1).GetComponent<RectTransform>();
+                rectTransform.anchoredPosition = m_IsMirror ? 
+                    new Vector2(tempRectTransform.anchoredPosition.x - tempRectTransform.rect.size.x - m_Spacing.y, -m_Padding.top) : 
+                    new Vector2(tempRectTransform.anchoredPosition.x + tempRectTransform.rect.size.x + m_Spacing.y, -m_Padding.top);
+            }
+        }
+    }
+#endif
 }

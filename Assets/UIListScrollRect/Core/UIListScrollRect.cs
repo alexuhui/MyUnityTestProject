@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -35,15 +32,6 @@ public class UIListScrollRect : ScrollRect
 
     [SerializeField]
     private UIListViewLayout m_Layout;
-    public UIListViewLayout Layout
-    {
-        get { return m_Layout; }
-        set
-        {
-            m_Layout = value;
-        }
-    }
-
     private Vector2 m_DefSize;
     public Vector2 DefSize
     {
@@ -109,8 +97,6 @@ public class UIListScrollRect : ScrollRect
         if (m_IsInit)
             return;
         m_IsInit = true;
-
-        Layout = m_Layout;
         onValueChanged.AddListener(OnScrollRectValueChange);
         ResetLayout();
         InitDefSize();
@@ -442,88 +428,16 @@ public class UIListScrollRect : ScrollRect
     }
 
 #if UNITY_EDITOR
+    private UIListViewLayout? previewLayout;
     [ContextMenu("Preview")]
     public void Preview()
     {
         if (Application.isPlaying || !content)
             return;
+        if (previewLayout == null || previewLayout != m_Layout)
+            ResetLayout();
 
-        Layout = m_Layout;
-        Vector2 v2 = Vector2.zero;
-
-        switch (Layout)
-        {
-            case UIListViewLayout.Vertical:
-                v2 = m_IsMirror ? new Vector2(0, 0) : new Vector2(0, 1);
-                for (int i = 0; i < content.childCount; i++)
-                {
-                    RectTransform rectTransform = content.GetChild(i).GetComponent<RectTransform>();
-                    rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = v2;
-                    if (i == 0)
-                        rectTransform.anchoredPosition = m_IsMirror ? new Vector2(m_Padding.left, m_Padding.bottom) : new Vector2(m_Padding.left, -m_Padding.top);
-                    else
-                    {
-                        RectTransform tempRectTransform = content.GetChild(i - 1).GetComponent<RectTransform>();
-                        rectTransform.anchoredPosition = m_IsMirror ? new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y + tempRectTransform.rect.size.y + m_Spacing.y) : new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y - tempRectTransform.rect.size.y - m_Spacing.y);
-                    }
-                }
-                
-                break;
-            case UIListViewLayout.Horizontal:
-                v2 = m_IsMirror ? new Vector2(1, 1) : new Vector2(0, 1);
-                for (int i = 0; i < content.childCount; i++)
-                {
-                    RectTransform rectTransform = content.GetChild(i).GetComponent<RectTransform>();
-                    rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = v2;
-                    if (i == 0)
-                        rectTransform.anchoredPosition = m_IsMirror ? new Vector2(-m_Padding.right, -m_Padding.top) : new Vector2(m_Padding.left, -m_Padding.top);
-                    else
-                    {
-                        RectTransform tempRectTransform = content.GetChild(i - 1).GetComponent<RectTransform>();
-                        rectTransform.anchoredPosition = m_IsMirror ? new Vector2(tempRectTransform.anchoredPosition.x - tempRectTransform.rect.size.x - m_Spacing.y, -m_Padding.top) : new Vector2(tempRectTransform.anchoredPosition.x + tempRectTransform.rect.size.x + m_Spacing.y, -m_Padding.top);
-                    }
-                }
-                
-                break;
-            case UIListViewLayout.GridVertical:
-                v2 = new Vector2(0, 1);
-                for (int i = 0; i < content.childCount; i++)
-                {
-                    RectTransform rectTransform = content.GetChild(i).GetComponent<RectTransform>();
-                    rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = v2;
-                    if (i == 0)
-                        rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_Padding.top);
-                    else
-                    {
-                        int index = i + 1;
-                        RectTransform tempRectTransform = content.GetChild(i - 1).GetComponent<RectTransform>();
-                        if ((i + 1) % m_ColCount == 1)
-                            rectTransform.anchoredPosition = new Vector2(m_Padding.left, tempRectTransform.anchoredPosition.y - DefSize.y - m_Spacing.y);
-                        else
-                            rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x + DefSize.x + m_Spacing.x, tempRectTransform.anchoredPosition.y);
-                    }
-                }
-                break;
-            case UIListViewLayout.GridHorizontal:
-                v2 = new Vector2(0, 1);
-                for (int i = 0; i < content.childCount; i++)
-                {
-                    RectTransform rectTransform = content.GetChild(i).GetComponent<RectTransform>();
-                    rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = v2;
-                    if (i == 0)
-                        rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_Padding.top);
-                    else
-                    {
-                        int index = i + 1;
-                        RectTransform tempRectTransform = content.GetChild(i - 1).GetComponent<RectTransform>();
-                        if (i % m_ColCount == 0)
-                            rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x + DefSize.x + m_Spacing.x, -m_Padding.top);
-                        else
-                            rectTransform.anchoredPosition = new Vector2(tempRectTransform.anchoredPosition.x, tempRectTransform.anchoredPosition.y - DefSize.y - m_Spacing.y);
-                    }
-                }
-                break;
-        }
+        m_ListLayout.Preview();
     }
 
     protected override void OnValidate()
@@ -532,6 +446,8 @@ public class UIListScrollRect : ScrollRect
 
         if (Application.isPlaying)
             Invalidate();
+        else
+            Preview();
     }
 #endif
 }
