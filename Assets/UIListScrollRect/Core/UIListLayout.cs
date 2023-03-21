@@ -11,16 +11,18 @@ public abstract class UIListLayout
     public List<UIListItemInfo> m_ItemInfos;
     public RectOffset m_Padding;
     public Vector2 m_Spacing;
-    public int m_DataCnt;
     public int m_ColCnt;
     public Vector2 m_DefaultSize;
     public bool m_IsMirror;
     public RectOffset m_RealPadding;
     public Vector3[] m_ViewportCornerInContentSpace = new Vector3[4];
+    public List<ItemDataBase> m_DataList;
 
-    public abstract (bool, bool) InitContent(RectTransform content, RectTransform viewRect,
+    public int m_DataCnt => m_DataList.Count;
+
+    public abstract (bool, bool) InitLayout(RectTransform content, RectTransform viewRect,
         List<UIListItemInfo> itemInfos, RectOffset padding,
-        Vector2 spacing, int dataCnt,
+        Vector2 spacing, List<ItemDataBase> dataList,
         int colCnt, Vector2 defSize,
         bool isMirror = false);
 

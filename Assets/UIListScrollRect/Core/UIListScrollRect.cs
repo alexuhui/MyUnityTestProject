@@ -98,16 +98,20 @@ public class UIListScrollRect : ScrollRect
             return;
         m_IsInit = true;
         onValueChanged.AddListener(OnScrollRectValueChange);
-        ResetLayout();
+        
+        SetLayout();
         InitDefSize();
+        InitLayout();
     }
 
     private void InitDefSize()
     {
-        UIListItemRender temp = CreateItem(false);
+        UIListItemRender temp = CreateItem();
         m_DefSize = temp.rectTransform.rect.size;
         if (!Application.isPlaying)
+        {
             DestroyImmediate(temp.gameObject);
+        }
         else
         {
             temp.gameObject.SetActive(false);
@@ -115,7 +119,7 @@ public class UIListScrollRect : ScrollRect
         }
     }
 
-    private void ResetLayout()
+    private void SetLayout()
     {
         switch (m_Layout)
         {
@@ -135,7 +139,11 @@ public class UIListScrollRect : ScrollRect
                 Debug.LogError($"layout not exit {m_Layout}");
                 break;
         }
-        (vertical, horizontal) = m_ListLayout.InitContent(content, viewRect, m_ItemInfos, m_Padding, m_Spacing, m_Datas.Count, m_ColCount, DefSize, m_IsMirror);
+    }
+
+    private void InitLayout()
+    {
+        (vertical, horizontal) = m_ListLayout.InitLayout(content, viewRect, m_ItemInfos, m_Padding, m_Spacing, m_Datas, m_ColCount, DefSize, m_IsMirror);
     }
 
     private void OnScrollRectValueChange(Vector2 call)
@@ -285,33 +293,35 @@ public class UIListScrollRect : ScrollRect
         if (!content)
             return;
 
-        (int startIndex, int endIndex) = m_ListLayout.GetShowIndex();
+        (int newStartIndex, int newEndIndex) = m_ListLayout.GetShowIndex();
 
         int maxIndex = Mathf.Max(0, m_Datas.Count - 1);
-        if (startIndex <= maxIndex)
+        if (newStartIndex <= maxIndex)
         {
-            startIndex = Mathf.Min(maxIndex, startIndex);
-            endIndex = Mathf.Min(maxIndex, endIndex);
+            newStartIndex = Mathf.Min(maxIndex, newStartIndex);
+            newEndIndex = Mathf.Min(maxIndex, newEndIndex);
         }
         else
         {
-            startIndex = m_StartIndex;
-            endIndex = m_EndIndex;
+            newStartIndex = m_StartIndex;
+            newEndIndex = m_EndIndex;
         }
 
-        bool bIsDirty = m_IsInvalid || startIndex != m_StartIndex || endIndex != m_EndIndex;
+        bool bIsDirty = m_IsInvalid || newStartIndex != m_StartIndex || newEndIndex != m_EndIndex;
         if (!bIsDirty)
             return;
-        m_StartIndex = startIndex;
-        m_EndIndex = endIndex;
-        m_ListLayout.SetRealPadding(startIndex, endIndex);
-        CacheItems();
-        RetsetItemsData();
+        
+        m_ListLayout.SetRealPadding(newStartIndex, newEndIndex);
+        CacheItems(newStartIndex, newEndIndex);
+        RetsetItemsData(newStartIndex, newEndIndex);
+
+        m_StartIndex = newStartIndex;
+        m_EndIndex = newEndIndex;
         InvalidateSize();
     }
 
 
-    private UIListItemRender CreateItem(bool bInit = true)
+    private UIListItemRender CreateItem()
     {
         UIListItemRender render = ItemPrefab.Clone();
         render.rectTransform.pivot = 
@@ -342,9 +352,9 @@ public class UIListScrollRect : ScrollRect
         }
     }
 
-    private void RetsetItemsData()
+    private void RetsetItemsData(int newStartIndex, int newEndIndex)
     {
-        for (int i = m_StartIndex; i <= m_EndIndex; i++)
+        for (int i = newStartIndex; i <= newEndIndex; i++)
         {
             if (i >= m_Datas.Count)
                 break;
@@ -371,7 +381,7 @@ public class UIListScrollRect : ScrollRect
                 render.SetData(m_Datas[i]);
                 render.SetSelected(m_SelectedIndex == i);
             }
-            else if (m_IsInvalid || i < this.m_StartIndex || i > this.m_EndIndex)
+            else if (m_IsInvalid || i < m_StartIndex || i > m_EndIndex)
             {
                 render.SetData(m_Datas[i]);
                 render.SetSelected(m_SelectedIndex == i);
@@ -379,11 +389,11 @@ public class UIListScrollRect : ScrollRect
         }
     }
 
-    private void CacheItems()
+    private void CacheItems(int newStartIndex, int newEndIndex)
     {
         if (m_Datas.Count > 0)
         {
-            for (int i = this.m_StartIndex; i < m_StartIndex; i++)
+            for (int i = m_StartIndex; i < newStartIndex; i++)
             {
                 if (i >= m_ItemInfos.Count)
                     break;
@@ -391,7 +401,7 @@ public class UIListScrollRect : ScrollRect
                 Cache(m_ItemInfos[i]);
             }
 
-            for (int i = m_EndIndex + 1; i <= this.m_EndIndex; i++)
+            for (int i = newEndIndex + 1; i <= m_EndIndex; i++)
             {
                 if (i >= m_ItemInfos.Count)
                     break;
@@ -434,8 +444,13 @@ public class UIListScrollRect : ScrollRect
     {
         if (Application.isPlaying || !content)
             return;
-        if (previewLayout == null || previewLayout != m_Layout)
-            ResetLayout();
+
+       if (previewLayout == null || previewLayout != m_Layout)
+        {
+            previewLayout = m_Layout;
+            SetLayout();
+        }
+        InitLayout();
 
         m_ListLayout.Preview();
     }

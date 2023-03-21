@@ -6,7 +6,7 @@ public static partial class UIListEx
 {
     public static void InitContentEx<T>(this T layout, RectTransform content, RectTransform viewRect,
         List<UIListItemInfo> itemInfos, RectOffset padding,
-        Vector2 spacing, int dataCnt,
+        Vector2 spacing, List<ItemDataBase> dataList,
         int colCnt, Vector2 defSize,
         bool isMirror = false) where T : UIListLayout
     {
@@ -15,7 +15,7 @@ public static partial class UIListEx
         layout.m_ItemInfos = itemInfos;
         layout.m_Padding = padding;
         layout.m_Spacing = spacing;
-        layout.m_DataCnt = dataCnt;
+        layout.m_DataList = dataList;
         layout.m_ColCnt = colCnt;
         layout.m_DefaultSize = defSize;
         layout.m_IsMirror = isMirror;

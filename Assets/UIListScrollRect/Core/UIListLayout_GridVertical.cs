@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class UIListLayout_GridVertical : UIListLayout
 {
-    public override (bool, bool) InitContent(RectTransform content, RectTransform viewRect,
+    public override (bool, bool) InitLayout(RectTransform content, RectTransform viewRect,
          List<UIListItemInfo> itemInfos, RectOffset padding,
-         Vector2 spacing, int dataCnt,
+         Vector2 spacing, List<ItemDataBase> dataList,
          int colCnt, Vector2 defSize,
          bool isMirror = false)
     {
-        this.InitContentEx(content, viewRect, itemInfos, padding, spacing, dataCnt, colCnt, defSize, isMirror);
+        this.InitContentEx(content, viewRect, itemInfos, padding, spacing, dataList, colCnt, defSize, isMirror);
         return this.InitContentVerticalEx(content, isMirror);
     }
 
