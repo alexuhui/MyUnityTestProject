@@ -315,146 +315,14 @@ public class UIListScrollRect : ScrollRect
         }
 
         bool bIsDirty = m_IsInvalid || startIndex != m_StartIndex || endIndex != m_EndIndex;
-
         if (!bIsDirty)
             return;
-
-
-        //float startPos;
-        //RectOffset tempPadding = new RectOffset(m_Padding.left, m_Padding.right, m_Padding.top, m_Padding.bottom);
-        //switch (Layout)
-        //{
-        //    case UIListViewLayout.Vertical:
-        //        startPos = m_IsMirror ? tempPadding.bottom : tempPadding.top;
-        //        for (int i = 0; i < startIndex; i++)
-        //        {
-        //            startPos += m_ItemInfos[i].size.y;
-        //            if (i != m_Datas.Count - 1)
-        //                startPos += m_Spacing.y;
-        //        }
-        //        int top = Mathf.RoundToInt(startPos);
-
-        //        startPos = m_IsMirror ? tempPadding.top : tempPadding.bottom;
-        //        for (int i = endIndex + 1; i < m_Datas.Count; i++)
-        //        {
-        //            startPos += m_ItemInfos[i].size.y;
-        //                startPos += m_Spacing.y;
-        //        }
-        //        tempPadding.top = top;
-        //        tempPadding.bottom = Mathf.RoundToInt(startPos);
-        //        break;
-        //    case UIListViewLayout.Horizontal:
-        //        startPos = m_IsMirror ? tempPadding.right : tempPadding.left;
-        //        for (int i = 0; i < startIndex; i++)
-        //        {
-        //            startPos += m_ItemInfos[i].size.x;
-        //            if (i != m_Datas.Count - 1)
-        //                startPos += m_Spacing.x;
-        //        }
-        //        int left = Mathf.RoundToInt(startPos);
-
-        //        startPos = m_IsMirror ? tempPadding.left : tempPadding.right;
-        //        for (int i = endIndex + 1; i < m_Datas.Count; i++)
-        //        {
-        //            startPos += m_ItemInfos[i].size.x;
-        //            if (i != m_Datas.Count - 1)
-        //                startPos += m_Spacing.x;
-        //        }
-        //        tempPadding.left = left;
-        //        tempPadding.right = Mathf.RoundToInt(startPos);
-        //        break;
-        //    case UIListViewLayout.GridVertical:
-        //    case UIListViewLayout.GridHorizontal:
-        //        int maxCnt = Mathf.CeilToInt((m_Datas.Count * 1f) / m_ColCount) * m_ColCount;
-
-        //        startPos = tempPadding.top;
-        //        for (int i = 0; i < startIndex; i += m_ColCount)
-        //        {
-        //            startPos += DefSize.y;
-        //            if (i < maxCnt)
-        //                startPos += m_Spacing.y;
-        //        }
-        //        tempPadding.top = Mathf.RoundToInt(startPos);
-
-        //        startPos = tempPadding.bottom;
-        //        for (int i = endIndex + m_ColCount; i < maxCnt; i += m_ColCount)
-        //        {
-        //            startPos += DefSize.y;
-        //            if (i < maxCnt)
-        //                startPos += m_Spacing.y;
-        //        }
-        //        tempPadding.bottom = Mathf.RoundToInt(startPos);
-        //        break;
-        //}
-
-        m_RealPadding = m_ListLayout.GetRealPadding(startIndex, endIndex);//tempPadding;
-
-        if (m_Datas.Count > 0)
-        {
-            for (int i = m_StartIndex; i < startIndex; i++)
-            {
-                if (i >= m_ItemInfos.Count)
-                    break;
-
-                Cache(m_ItemInfos[i]);
-            }
-
-            for (int i = endIndex + 1; i <= m_EndIndex; i++)
-            {
-                if (i >= m_ItemInfos.Count)
-                    break;
-
-                Cache(m_ItemInfos[i]);
-            }
-        }
-        else
-        {
-            for (int i = m_StartIndex; i <= m_EndIndex; i++)
-            {
-                if (i >= m_ItemInfos.Count)
-                    break;
-
-                Cache(m_ItemInfos[i]);
-            }
-        }
-
-        for (int i = startIndex; i <= endIndex; i++)
-        {
-            if (i >= m_Datas.Count)
-                break;
-
-            UIListItemRender render = m_ItemInfos[i].render;
-            if (render == null)
-            {
-                if (m_Renders.Count > 0)
-                {
-                    int index = m_Renders.Count - 1;
-                    render = m_Renders[index];
-                    render.gameObject.SetActive(true);
-                    m_Renders.RemoveAt(index);
-                }
-                else
-                {
-                    render = CreateItem();
-                    render.gameObject.SetActive(true);
-                }
-
-                render.name = i.ToString();
-                //render.m_index = i;
-                m_ItemInfos[i].render = render;
-
-                render.SetData(m_Datas[i]);
-                render.SetSelected(m_SelectedIndex == i);
-            }
-            else if (m_IsInvalid || i < m_StartIndex || i > m_EndIndex)
-            {
-                render.SetData(m_Datas[i]);
-                render.SetSelected(m_SelectedIndex == i);
-            }
-        }
-
         m_StartIndex = startIndex;
         m_EndIndex = endIndex;
+        CacheItems();
+        RetSetItemsData();
+        m_RealPadding = m_ListLayout.GetRealPadding(startIndex, endIndex);
+        
 
         InvalidateSize();
     }
@@ -635,6 +503,76 @@ public class UIListScrollRect : ScrollRect
                     content.sizeDelta = new Vector2(lastRectTransform.anchoredPosition.x + lastItemInfo.size.x + m_RealPadding.right, content.sizeDelta.y);
                 }
                 break;
+        }
+    }
+
+    private void RetSetItemsData()
+    {
+        for (int i = m_StartIndex; i <= m_EndIndex; i++)
+        {
+            if (i >= m_Datas.Count)
+                break;
+
+            UIListItemRender render = m_ItemInfos[i].render;
+            if (render == null)
+            {
+                if (m_Renders.Count > 0)
+                {
+                    int index = m_Renders.Count - 1;
+                    render = m_Renders[index];
+                    render.gameObject.SetActive(true);
+                    m_Renders.RemoveAt(index);
+                }
+                else
+                {
+                    render = CreateItem();
+                    render.gameObject.SetActive(true);
+                }
+
+                render.name = i.ToString();
+                //render.m_index = i;
+                m_ItemInfos[i].render = render;
+
+                render.SetData(m_Datas[i]);
+                render.SetSelected(m_SelectedIndex == i);
+            }
+            else if (m_IsInvalid || i < this.m_StartIndex || i > this.m_EndIndex)
+            {
+                render.SetData(m_Datas[i]);
+                render.SetSelected(m_SelectedIndex == i);
+            }
+        }
+    }
+
+    private void CacheItems()
+    {
+        if (m_Datas.Count > 0)
+        {
+            for (int i = this.m_StartIndex; i < m_StartIndex; i++)
+            {
+                if (i >= m_ItemInfos.Count)
+                    break;
+
+                Cache(m_ItemInfos[i]);
+            }
+
+            for (int i = m_EndIndex + 1; i <= this.m_EndIndex; i++)
+            {
+                if (i >= m_ItemInfos.Count)
+                    break;
+
+                Cache(m_ItemInfos[i]);
+            }
+        }
+        else
+        {
+            for (int i = this.m_StartIndex; i <= this.m_EndIndex; i++)
+            {
+                if (i >= m_ItemInfos.Count)
+                    break;
+
+                Cache(m_ItemInfos[i]);
+            }
         }
     }
 
