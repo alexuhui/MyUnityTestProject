@@ -37,12 +37,12 @@ public class UIListLayout_GridVertical : UIListLayout
 
     public override (int, int) GetShowIndex()
     {
-        return this.GetShowIndexVerticalEx();
+        return this.GetShowIndexGridEx();
     }
 
     public override void SetRealPadding(int startIndex, int endIndex)
     {
-        m_RealPadding = this.GetRealPaddingVerticalEx(startIndex, endIndex);
+        m_RealPadding = this.GetGridRealPaddingGridEx(startIndex, endIndex);
     }
 
     public override Vector2 GetAnchor()

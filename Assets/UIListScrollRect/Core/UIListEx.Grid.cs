@@ -42,6 +42,25 @@ public static partial class UIListEx
         layout.m_Content.anchoredPosition = new Vector2(layout.m_Content.anchoredPosition.x, layout.m_IsMirror ? -tempSize : tempSize);
     }
 
+    public static (int, int) GetShowIndexGridEx<T>(this T layout) where T : UIListLayout
+    {
+        int startIndex = 0;
+        int endIndex;
+        float startPos;
+        startPos = layout.m_Padding.top;
+        float conner = layout.GetStartCorner();
+        if (conner > startPos)
+        {
+            startPos = conner - startPos;
+            startIndex = Mathf.FloorToInt(startPos / (layout.m_DefaultSize.y + layout.m_Spacing.y)) * layout.m_ColCnt;
+        }
+
+        float height = layout.m_ViewRect.rect.height + layout.m_Spacing.y;
+        endIndex = startIndex + Mathf.CeilToInt(height / (layout.m_DefaultSize.y + layout.m_Spacing.y) + 1) * layout.m_ColCnt - 1;
+
+        return (startIndex, endIndex);
+    }
+
     public static Vector2 GetAnchorGridEx<T>(this T layout) where T : UIListLayout
     {
         return new Vector2(0, 1);

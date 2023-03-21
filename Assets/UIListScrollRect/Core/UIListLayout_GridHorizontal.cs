@@ -37,12 +37,12 @@ public class UIListLayout_GridHorizontal : UIListLayout
 
     public override (int, int) GetShowIndex()
     {
-        return this.GetShowIndexHorizontalEx();
+        return this.GetShowIndexGridEx();
     }
 
     public override void SetRealPadding(int startIndex, int endIndex)
     {
-        m_RealPadding = this.GetRealPaddingHorizontalEx(startIndex, endIndex);
+        m_RealPadding = this.GetGridRealPaddingGridEx(startIndex, endIndex);
     }
 
     public override Vector2 GetAnchor()
