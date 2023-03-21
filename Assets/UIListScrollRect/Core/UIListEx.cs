@@ -2,30 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class UIListEx
+public static partial class UIListEx
 {
-    public static RectOffset GetGridRealPadding<T>(this T gridLayout, int startIndex, int endIndex) where T : UIListLayout, IUIListGrid
+    public static void InitContentEx<T>(this T layout, RectTransform content, RectTransform viewRect,
+        List<UIListItemInfo> itemInfos, RectOffset padding,
+        Vector2 spacing, int dataCnt,
+        int colCnt, Vector2 defSize,
+        bool isMirror = false) where T : UIListLayout
     {
-        RectOffset padding = new RectOffset(gridLayout.m_Padding.left, gridLayout.m_Padding.right, gridLayout.m_Padding.top, gridLayout.m_Padding.bottom);
-        int maxCnt = Mathf.CeilToInt((gridLayout.m_DataCnt * 1f) / gridLayout.m_ColCnt) * gridLayout.m_ColCnt;
-        float startPos = padding.top;
-        for (int i = 0; i < startIndex; i += gridLayout.m_ColCnt)
-        {
-            startPos += gridLayout.m_DefaultSize.y;
-            if (i < maxCnt)
-                startPos += gridLayout.m_Spacing.y;
-        }
-        padding.top = Mathf.RoundToInt(startPos);
-
-        startPos = padding.bottom;
-        for (int i = endIndex + gridLayout.m_ColCnt; i < maxCnt; i += gridLayout.m_ColCnt)
-        {
-            startPos += gridLayout.m_DefaultSize.y;
-            if (i < maxCnt)
-                startPos += gridLayout.m_Spacing.y;
-        }
-        padding.bottom = Mathf.RoundToInt(startPos);
-
-        return padding;
+        layout.m_Content = content;
+        layout.m_ViewRect = viewRect;
+        layout.m_ItemInfos = itemInfos;
+        layout.m_Padding = padding;
+        layout.m_Spacing = spacing;
+        layout.m_DataCnt = dataCnt;
+        layout.m_ColCnt = colCnt;
+        layout.m_DefaultSize = defSize;
+        layout.m_IsMirror = isMirror;
     }
+
+    public static void CalViewportCornerEx<T>(this T layout) where T : UIListLayout
+    {
+        layout.m_ViewRect.GetWorldCorners(layout.m_ViewportCornerInContentSpace);
+        Matrix4x4 matrix4X4 = layout.m_Content.transform.worldToLocalMatrix;
+        for (int i = 0; i < 4; ++i)
+        {
+            layout.m_ViewportCornerInContentSpace[i] = matrix4X4.MultiplyPoint(layout.m_ViewportCornerInContentSpace[i]);
+        }
+    }
+
+    public static int GetGetColumnCountEx()
+    {
+        return 2;
+    }
+
+
 }
