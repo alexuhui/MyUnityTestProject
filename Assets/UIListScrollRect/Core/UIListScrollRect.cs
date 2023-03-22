@@ -7,7 +7,6 @@ public class UIListScrollRect : ScrollRect
 {
     public UIListItemRender ItemPrefab;
 
-    private UIListLayout m_ListLayout;
     [SerializeField]
     private RectOffset m_Padding;
     [SerializeField]
@@ -24,6 +23,7 @@ public class UIListScrollRect : ScrollRect
     private bool m_IsUpdateSize;
     private bool m_IsScrollOnUpdateEnd;
     private int m_ScrollToIndex;
+    private UIListLayout m_ListLayout;
 
     private List<ItemDataBase> m_Datas = new List<ItemDataBase>();
     private List<UIListItemInfo> m_ItemInfos = new List<UIListItemInfo>();
@@ -61,10 +61,6 @@ public class UIListScrollRect : ScrollRect
 
     protected override void LateUpdate()
     {
-        Vector3 scale = this.transform.lossyScale;
-        if (scale.x == 0 || scale.y == 0)
-            return;
-
         if (m_IsUpdateSize)
         {
             m_IsUpdateSize = false;
