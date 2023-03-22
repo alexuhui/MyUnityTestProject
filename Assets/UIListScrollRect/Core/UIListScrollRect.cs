@@ -263,6 +263,7 @@ public class UIListScrollRect : ScrollRect
 
         StopMovement();
         m_ListLayout.ScrollToItem(index);
+        SetSelect(index);
         Invalidate();
     }
 

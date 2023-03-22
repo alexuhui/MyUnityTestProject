@@ -22,7 +22,15 @@ public class UIListLayout_GridVertical : UIListLayout
 
     public override void ScrollToItem(int index)
     {
-        this.ScrollToItemGridEx(index);
+        int rowCount = Mathf.FloorToInt(index / m_ColCnt);
+        float tempSize = m_ItemInfos.Count > 0 ? m_Padding.top + rowCount * (m_ItemInfos[0].size.y + m_Spacing.y) : 0;
+
+        if (m_Content.rect.height < m_ViewRect.rect.height)
+            tempSize = Mathf.Min(0, tempSize);
+        else
+            tempSize = Mathf.Min(m_Content.rect.height - m_ViewRect.rect.height, tempSize);
+
+        m_Content.anchoredPosition = new Vector2(m_Content.anchoredPosition.x, m_IsMirror ? -tempSize : tempSize);
     }
 
     public override int GetColumnCount()

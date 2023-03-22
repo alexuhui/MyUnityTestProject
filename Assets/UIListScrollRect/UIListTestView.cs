@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UIListTestView : MonoBehaviour
 {
@@ -8,6 +10,30 @@ public class UIListTestView : MonoBehaviour
     public UIListScrollRect listViewV;
     public UIListScrollRect listViewGH;
     public UIListScrollRect listViewGV;
+
+    [SerializeField] private InputField inputJump;
+    [SerializeField] private GameObject btnJump;
+
+    private void Awake()
+    {
+        UIEventListener.Bind(btnJump).OnPointerClick = OnBtnJumpClick;
+    }
+    private void OnDestroy()
+    {
+        UIEventListener.Clear(btnJump);
+    }
+
+
+    private void OnBtnJumpClick(GameObject go, PointerEventData data)
+    {
+        if(int.TryParse(inputJump.text, out int index))
+        {
+            listViewH.ScrollToItem(index);
+            listViewV.ScrollToItem(index);
+            listViewGH.ScrollToItem(index);
+            listViewGV.ScrollToItem(index);
+        }
+    }
 
     private void Start()
     {

@@ -32,7 +32,15 @@ public class UIListLayout_GridHorizontal : UIListLayout
 
     public override void ScrollToItem(int index)
     {
-        this.ScrollToItemGridEx(index);
+        int rowCount = Mathf.FloorToInt(index / m_ColCnt);
+        float tempSize = m_ItemInfos.Count > 0 ? m_Padding.left + rowCount * (m_DefaultSize.x + m_Spacing.x) : 0;
+
+        if (m_Content.rect.width < m_ViewRect.rect.width)
+            tempSize = Mathf.Min(0, tempSize);
+        else
+            tempSize = Mathf.Min(m_Content.rect.width - m_ViewRect.rect.width, tempSize);
+
+        m_Content.anchoredPosition = new Vector2(-tempSize, m_Content.anchoredPosition.y);
     }
 
     public override (int, int) GetShowIndex()
