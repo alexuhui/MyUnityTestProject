@@ -64,7 +64,7 @@ public class UIListItemRender : UIBehaviour
         return m_Data as T;
     }
 
-    protected virtual void OnClick(PointerEventData data)
+    protected virtual void OnClick(GameObject go, PointerEventData data)
     {
         m_ListScrollRect.SetSelect(Index);
     }

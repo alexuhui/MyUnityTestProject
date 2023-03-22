@@ -7,10 +7,10 @@ using Unity.VisualScripting;
 
 public class UIEventListener : MonoBehaviour
 {
-    public delegate void PointerEventDelegate(PointerEventData eventData);
-    public delegate void AxisEventDelegate(AxisEventData eventData);
-    public delegate void BaseEventDelegate(BaseEventData eventData);
-    public delegate void BaseEventPassDelegate(bool state);
+    public delegate void PointerEventDelegate(GameObject go, PointerEventData eventData);
+    public delegate void AxisEventDelegate(GameObject go, AxisEventData eventData);
+    public delegate void BaseEventDelegate(GameObject go, BaseEventData eventData);
+    public delegate void BaseEventPassDelegate(GameObject go, bool state);
 
 
     private PointerEventDelegate m_OnPointerEnter;
@@ -410,7 +410,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnPointerEnter(PointerEventData eventData)
         {
             if (owner.OnPointerEnter != null)
-                owner.OnPointerEnter(eventData);
+                owner.OnPointerEnter(gameObject, eventData);
         }
     }
 
@@ -422,7 +422,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnPointerExit(PointerEventData eventData)
         {
             if (owner.OnPointerExit != null)
-                owner.OnPointerExit(eventData);
+                owner.OnPointerExit(gameObject, eventData);
         }
     }
 
@@ -434,7 +434,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnPointerDown(PointerEventData eventData)
         {
             if (owner.OnPointerDown != null)
-                owner.OnPointerDown(eventData);
+                owner.OnPointerDown(gameObject, eventData);
         }
     }
 
@@ -447,7 +447,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnPointerUp(PointerEventData eventData)
         {
             if (owner.OnPointerUp != null)
-                owner.OnPointerUp(eventData);
+                owner.OnPointerUp(gameObject, eventData);
         }
     }
 
@@ -464,7 +464,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (owner.OnPointerClick != null)
-                owner.OnPointerClick(eventData);
+                owner.OnPointerClick(gameObject, eventData);
         }
     }
 
@@ -475,7 +475,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (owner.OnPointerHoleClick != null)
-                owner.OnPointerHoleClick(eventData);
+                owner.OnPointerHoleClick(gameObject, eventData);
             owner.HoleHandler(eventData, ExecuteEvents.pointerClickHandler);
         }
     }
@@ -530,7 +530,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnInitializePotentialDrag(PointerEventData eventData)
         {
             if (owner.OnInitializePotentialDrag != null)
-                owner.OnInitializePotentialDrag(eventData);
+                owner.OnInitializePotentialDrag(gameObject, eventData);
         }
     }
 
@@ -542,7 +542,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnBeginDrag(PointerEventData eventData)
         {
             if (owner.OnBeginDrag != null)
-                owner.OnBeginDrag(eventData);
+                owner.OnBeginDrag(gameObject, eventData);
         }
     }
 
@@ -554,7 +554,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnEndDrag(PointerEventData eventData)
         {
             if (owner.OnEndDrag != null)
-                owner.OnEndDrag(eventData);
+                owner.OnEndDrag(gameObject, eventData);
         }
     }
 
@@ -566,7 +566,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnDrag(PointerEventData eventData)
         {
             if (owner.OnDrag != null)
-                owner.OnDrag(eventData);
+                owner.OnDrag(gameObject, eventData);
         }
     }
 
@@ -578,7 +578,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnDrop(PointerEventData eventData)
         {
             if (owner.OnDrop != null)
-                owner.OnDrop(eventData);
+                owner.OnDrop(gameObject, eventData);
         }
     }
 
@@ -590,7 +590,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnScroll(PointerEventData eventData)
         {
             if (owner.OnScroll != null)
-                owner.OnScroll(eventData);
+                owner.OnScroll(gameObject, eventData);
         }
     }
 
@@ -602,7 +602,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnUpdateSelected(BaseEventData eventData)
         {
             if (owner.OnUpdateSelected != null)
-                owner.OnUpdateSelected(eventData);
+                owner.OnUpdateSelected(gameObject, eventData);
         }
     }
 
@@ -614,7 +614,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnSelect(BaseEventData eventData)
         {
             if (owner.OnSelect != null)
-                owner.OnSelect(eventData);
+                owner.OnSelect(gameObject, eventData);
         }
     }
 
@@ -626,7 +626,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnDeselect(BaseEventData eventData)
         {
             if (owner.OnDeselect != null)
-                owner.OnDeselect(eventData);
+                owner.OnDeselect(gameObject, eventData);
         }
 
     }
@@ -639,7 +639,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnMove(AxisEventData eventData)
         {
             if (owner.OnMove != null)
-                owner.OnMove(eventData);
+                owner.OnMove(gameObject, eventData);
         }
 
     }
@@ -652,7 +652,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnSubmit(BaseEventData eventData)
         {
             if (owner.OnSubmit != null)
-                owner.OnSubmit(eventData);
+                owner.OnSubmit(gameObject, eventData);
         }
 
     }
@@ -665,7 +665,7 @@ public class UIEventListener : MonoBehaviour
         public virtual void OnCancel(BaseEventData eventData)
         {
             if (owner.OnCancel != null)
-                owner.OnCancel(eventData);
+                owner.OnCancel(gameObject, eventData);
         }
 
     }
@@ -703,7 +703,7 @@ public class UIEventListener : MonoBehaviour
             {
                 isPress = false;
                 if (owner.OnPress != null)
-                    owner.OnPress(null);
+                    owner.OnPress(gameObject, null);
             }
         }
     }
@@ -721,7 +721,7 @@ public class UIEventListener : MonoBehaviour
             downTime = Time.time;
             isPress = true;
             if (owner.OnLongPress != null)
-                owner.OnLongPress(isPress);
+                owner.OnLongPress(gameObject, isPress);
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -733,7 +733,7 @@ public class UIEventListener : MonoBehaviour
         {
             isPress = false;
             if (owner.OnLongPress != null)
-                owner.OnLongPress(isPress);
+                owner.OnLongPress(gameObject, isPress);
         }
 
         private void FixedUpdate()
@@ -744,7 +744,7 @@ public class UIEventListener : MonoBehaviour
             if (Time.time - downTime > 0.5f)
             {
                 if (owner.OnLongPress != null)
-                    owner.OnLongPress(isPress);
+                    owner.OnLongPress(gameObject, isPress);
             }
         }
 
@@ -752,7 +752,7 @@ public class UIEventListener : MonoBehaviour
         {
             isPress = false;
             if (owner.OnLongPress != null)
-                owner.OnLongPress(isPress);
+                owner.OnLongPress(gameObject, isPress);
         }
     }
 
@@ -801,7 +801,7 @@ public class UIEventListener : MonoBehaviour
         {
             isPress = true;
             if (owner.OnPressEx != null)
-                owner.OnPressEx(isPress);
+                owner.OnPressEx(gameObject, isPress);
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -810,7 +810,7 @@ public class UIEventListener : MonoBehaviour
             if (owner.OnPressEx != null && isPress)
             {
                 isPress = false;
-                owner.OnPressEx(isPress);
+                owner.OnPressEx(gameObject, isPress);
             }
         }
 
@@ -819,7 +819,7 @@ public class UIEventListener : MonoBehaviour
             if (owner.OnPressEx != null && isPress)
             {
                 isPress = false;
-                owner.OnPressEx(isPress);
+                owner.OnPressEx(gameObject, isPress);
             }
         }
     }

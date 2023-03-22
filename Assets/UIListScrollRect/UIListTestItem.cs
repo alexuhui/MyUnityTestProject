@@ -22,9 +22,9 @@ public class UIListTestItem : UIListItemRender
         base.OnSelected(value);
     }
 
-    protected override void OnClick(PointerEventData data)
+    protected override void OnClick(GameObject go, PointerEventData data)
     {
-        base.OnClick(data);
+        base.OnClick(go, data);
 
         Debug.Log($"OnClick index {Index}  label {m_Data.label}");
     }
