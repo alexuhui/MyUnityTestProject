@@ -37,12 +37,46 @@ public class UIListLayout_GridVertical : UIListLayout
 
     public override (int, int) GetShowIndex()
     {
-        return this.GetShowIndexGridEx();
+        int startIndex = 0;
+        int endIndex;
+        float startPos;
+        startPos = m_Padding.top;
+        float conner = GetStartCorner();
+        if (conner > startPos)
+        {
+            startPos = conner - startPos;
+            startIndex = Mathf.FloorToInt(startPos / (m_DefaultSize.y + m_Spacing.y)) * m_ColCnt;
+        }
+
+        float height = m_ViewRect.rect.height + m_Spacing.y;
+        endIndex = startIndex + Mathf.CeilToInt(height / (m_DefaultSize.y + m_Spacing.y) + 1) * m_ColCnt - 1;
+
+        return (startIndex, endIndex);
     }
 
     public override void SetRealPadding(int startIndex, int endIndex)
     {
-        m_RealPadding = this.GetGridRealPaddingGridEx(startIndex, endIndex);
+        RectOffset padding = new RectOffset(m_Padding.left, m_Padding.right, m_Padding.top, m_Padding.bottom);
+        int maxCnt = Mathf.CeilToInt((m_DataCnt * 1f) / m_ColCnt) * m_ColCnt;
+        float startPos = padding.top;
+        for (int i = 0; i < startIndex; i += m_ColCnt)
+        {
+            startPos += m_DefaultSize.y;
+            if (i < maxCnt)
+                startPos += m_Spacing.y;
+        }
+        padding.top = Mathf.RoundToInt(startPos);
+
+        startPos = padding.bottom;
+        for (int i = endIndex + m_ColCnt; i < maxCnt; i += m_ColCnt)
+        {
+            startPos += m_DefaultSize.y;
+            if (i < maxCnt)
+                startPos += m_Spacing.y;
+        }
+        padding.bottom = Mathf.RoundToInt(startPos);
+
+        m_RealPadding = padding;
     }
 
     public override Vector2 GetAnchor(bool isMirror)

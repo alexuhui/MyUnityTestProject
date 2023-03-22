@@ -17,7 +17,7 @@ public class UIListLayout_GridHorizontal : UIListLayout
     public override float GetStartCorner()
     {
         this.CalViewportCornerEx();
-        return -m_ViewportCornerInContentSpace[1].y;
+        return m_ViewportCornerInContentSpace[1].x;
     }
 
     public override void ResetPosition()
@@ -37,12 +37,46 @@ public class UIListLayout_GridHorizontal : UIListLayout
 
     public override (int, int) GetShowIndex()
     {
-        return this.GetShowIndexGridEx();
+        int startIndex = 0;
+        int endIndex;
+        float startPos;
+        startPos = m_Padding.left;
+        float conner = GetStartCorner();
+        if (conner > startPos)
+        {
+            startPos = conner - startPos;
+            startIndex = Mathf.FloorToInt(startPos / (m_DefaultSize.x + m_Spacing.x)) * m_ColCnt;
+        }
+
+        float width = m_ViewRect.rect.width + m_Spacing.x;
+        endIndex = startIndex + Mathf.CeilToInt(width / (m_DefaultSize.x + m_Spacing.x) + 1) * m_ColCnt - 1;
+
+        return (startIndex, endIndex);
     }
 
     public override void SetRealPadding(int startIndex, int endIndex)
     {
-        m_RealPadding = this.GetGridRealPaddingGridEx(startIndex, endIndex);
+        RectOffset padding = new RectOffset(m_Padding.left, m_Padding.right, m_Padding.top, m_Padding.bottom);
+        int maxCnt = Mathf.CeilToInt((m_DataCnt * 1f) / m_ColCnt) * m_ColCnt;
+        float startPos = padding.left;
+        for (int i = 0; i < startIndex; i += m_ColCnt)
+        {
+            startPos += m_DefaultSize.x;
+            if (i < maxCnt)
+                startPos += m_Spacing.x;
+        }
+        padding.left = Mathf.RoundToInt(startPos);
+
+        float endPos = padding.right;
+        for (int i = endIndex + m_ColCnt; i < maxCnt; i += m_ColCnt)
+        {
+            endPos += m_DefaultSize.x;
+            if (i < maxCnt)
+                endPos += m_Spacing.x;
+        }
+        padding.right = Mathf.RoundToInt(endPos);
+
+        m_RealPadding = padding;
     }
 
     public override Vector2 GetAnchor(bool isMirror)
@@ -62,7 +96,7 @@ public class UIListLayout_GridHorizontal : UIListLayout
             RectTransform rectTransform = itemInfo.render.rectTransform;
             if (i == startIndex)
             {
-                rectTransform.anchoredPosition = new Vector2(m_Padding.left, -m_RealPadding.top);
+                rectTransform.anchoredPosition = new Vector2(m_RealPadding.left, -m_Padding.top);
             }
             else
             {
