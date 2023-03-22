@@ -22,7 +22,7 @@ public class UIListViewEditor : ScrollRectEditor
         base.OnEnable();
 
         m_ItemPrefab = serializedObject.FindProperty("ItemPrefab");
-        m_Layout = serializedObject.FindProperty("m_Layout");
+        m_Layout = serializedObject.FindProperty("Layout");
         m_Padding = serializedObject.FindProperty("m_Padding");
         m_Spacing = serializedObject.FindProperty("m_Spacing");
         m_isMirror = serializedObject.FindProperty("m_IsMirror");

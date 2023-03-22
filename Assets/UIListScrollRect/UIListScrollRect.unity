@@ -266,6 +266,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ItemPrefab: {fileID: 6524469837206256175, guid: a02bdb12f6770a5479caaf49fb2658a9, type: 3}
+  Layout: 2
   m_Padding:
     m_Left: 5
     m_Right: 0
@@ -274,7 +275,6 @@ MonoBehaviour:
   m_Spacing: {x: 22.31, y: 26.27}
   m_ColCount: 2
   m_IsMirror: 0
-  m_Layout: 2
 --- !u!1 &551134794
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,6 +497,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ItemPrefab: {fileID: 6524469837206256175, guid: a02bdb12f6770a5479caaf49fb2658a9, type: 3}
+  Layout: 3
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -505,7 +506,6 @@ MonoBehaviour:
   m_Spacing: {x: 17.93, y: 17.07}
   m_ColCount: 3
   m_IsMirror: 0
-  m_Layout: 3
 --- !u!1 &695447427
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,8 +849,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -153.22015}
-  m_SizeDelta: {x: 947.34, y: 306.44}
+  m_AnchoredPosition: {x: 0, y: -153.22998}
+  m_SizeDelta: {x: 0.34002686, y: 306.44}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &1067563490
 GameObject:
@@ -883,10 +883,10 @@ RectTransform:
   m_Father: {fileID: 1236725171}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -52.58}
-  m_SizeDelta: {x: 300, y: 105.14}
+  m_AnchoredPosition: {x: 0, y: 0.07500458}
+  m_SizeDelta: {x: 614.84, y: 0.15000153}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &1179008679
 GameObject:
@@ -1233,15 +1233,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ItemPrefab: {fileID: 6524469837206256175, guid: a02bdb12f6770a5479caaf49fb2658a9, type: 3}
+  Layout: 0
   m_Padding:
-    m_Left: 28
-    m_Right: 5
-    m_Top: 0
-    m_Bottom: 0
+    m_Left: 32
+    m_Right: 0
+    m_Top: 20
+    m_Bottom: 20
   m_Spacing: {x: 0, y: 16.25}
   m_ColCount: 1
   m_IsMirror: 1
-  m_Layout: 0
 --- !u!224 &1546928500
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1509,6 +1509,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ItemPrefab: {fileID: 6524469837206256175, guid: a02bdb12f6770a5479caaf49fb2658a9, type: 3}
+  Layout: 1
   m_Padding:
     m_Left: 0
     m_Right: 0
@@ -1517,7 +1518,6 @@ MonoBehaviour:
   m_Spacing: {x: 4, y: 4}
   m_ColCount: 1
   m_IsMirror: 1
-  m_Layout: 1
 --- !u!1 &1839365530
 GameObject:
   m_ObjectHideFlags: 0

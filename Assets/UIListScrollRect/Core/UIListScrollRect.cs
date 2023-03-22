@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UIListScrollRect : ScrollRect
 {
     public UIListItemRender ItemPrefab;
+    public UIListViewLayout Layout;
 
     [SerializeField]
     private RectOffset m_Padding;
@@ -28,10 +29,7 @@ public class UIListScrollRect : ScrollRect
     private List<ItemDataBase> m_Datas = new List<ItemDataBase>();
     private List<UIListItemInfo> m_ItemInfos = new List<UIListItemInfo>();
     private List<UIListItemRender> m_Renders = new List<UIListItemRender>();
-
-
-    [SerializeField]
-    private UIListViewLayout m_Layout;
+    
     private Vector2 m_DefSize;
     public Vector2 DefSize
     {
@@ -61,6 +59,9 @@ public class UIListScrollRect : ScrollRect
 
     protected override void LateUpdate()
     {
+        if (m_Datas.Count <= 0)
+            return;
+
         if (m_IsUpdateSize)
         {
             m_IsUpdateSize = false;
@@ -71,6 +72,9 @@ public class UIListScrollRect : ScrollRect
 
     private void Update()
     {
+        if (m_Datas.Count <= 0)
+            return;
+
         if (m_IsInvalid && gameObject.activeInHierarchy)
         {
             UpdateView();
@@ -90,8 +94,12 @@ public class UIListScrollRect : ScrollRect
 
     private void Init()
     {
+        if (content == null || viewRect == null)
+            return;
+
         if (m_IsInit)
             return;
+
         m_IsInit = true;
         onValueChanged.AddListener(OnScrollRectValueChange);
         
@@ -103,6 +111,9 @@ public class UIListScrollRect : ScrollRect
     private void InitDefSize()
     {
         UIListItemRender temp = CreateItem();
+        if (temp == null)
+            return;
+
         m_DefSize = temp.rectTransform.rect.size;
         if (!Application.isPlaying)
         {
@@ -117,7 +128,7 @@ public class UIListScrollRect : ScrollRect
 
     private void SetLayout()
     {
-        switch (m_Layout)
+        switch (Layout)
         {
             case UIListViewLayout.Horizontal:
                 m_ListLayout = new UIListLayout_Horizontal();
@@ -132,7 +143,7 @@ public class UIListScrollRect : ScrollRect
                 m_ListLayout = new UIListLayout_GridVertical();
                 break;
             default:
-                Debug.LogError($"layout not exit {m_Layout}");
+                Debug.LogError($"layout not exit {Layout}");
                 break;
         }
     }
@@ -319,6 +330,8 @@ public class UIListScrollRect : ScrollRect
 
     private UIListItemRender CreateItem()
     {
+        if(ItemPrefab == null) return null;
+
         UIListItemRender render = ItemPrefab.Clone(this);
         render.rectTransform.pivot = 
             render.rectTransform.anchorMin = 
@@ -460,9 +473,9 @@ public class UIListScrollRect : ScrollRect
 
     private void ChangeProp()
     {
-        if (previewLayout == null || previewLayout != m_Layout)
+        if (previewLayout == null || previewLayout != Layout)
         {
-            previewLayout = m_Layout;
+            previewLayout = Layout;
             SetLayout();
         }
         InitLayout();
