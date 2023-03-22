@@ -8,3 +8,10 @@ public enum UIListViewLayout
     GridVertical,
     GridHorizontal,
 }
+
+public enum UIListItemSelectStatus
+{
+    None,
+    Selected,
+    Unselected,
+}

@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UIListTestView;
 
 public class UIListTestItem : UIListItemRender
 {
@@ -15,5 +15,17 @@ public class UIListTestItem : UIListItemRender
         base.OnDataRefresh();
         m_Data = GetData<TestData>();
         label.text = m_Data.label;
+    }
+
+    protected override void OnSelected(bool value)
+    {
+        base.OnSelected(value);
+    }
+
+    protected override void OnClick(PointerEventData data)
+    {
+        base.OnClick(data);
+
+        Debug.Log($"OnClick index {Index}  label {m_Data.label}");
     }
 }

@@ -45,9 +45,9 @@ public class UIListLayout_GridVertical : UIListLayout
         m_RealPadding = this.GetGridRealPaddingGridEx(startIndex, endIndex);
     }
 
-    public override Vector2 GetAnchor()
+    public override Vector2 GetAnchor(bool isMirror)
     {
-        return this.GetAnchorGridEx();
+        return this.GetAnchorGridEx(isMirror);
     }
 
     public override void ResetContentPos()

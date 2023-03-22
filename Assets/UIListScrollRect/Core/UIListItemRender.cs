@@ -8,15 +8,22 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RectTransform))]
 public class UIListItemRender : UIBehaviour
 {
+    public int Index;
+    public bool CanClick = true;
+    public GameObject SelectedShowObj;
+    public GameObject UnselectedShowObj;
     public Action OnRectSizeChange;
 
-    
+    private UIListScrollRect m_ListScrollRect;
+    private ItemDataBase m_Data;
+    private UIListItemSelectStatus selectedStatus = UIListItemSelectStatus.None;
+
     private RectTransform m_RectTransform;
     public RectTransform rectTransform
     {
         get
         {
-            if (ReferenceEquals(m_RectTransform, null))
+            if (m_RectTransform == null)
             {
                 m_RectTransform = GetComponent<RectTransform>();
             }
@@ -24,14 +31,24 @@ public class UIListItemRender : UIBehaviour
         }
     }
 
-    private ItemDataBase m_Data;
-
-    private int m_Index;
-    public int Index { get { return m_Index; } }
-
-    public void SetData(ItemDataBase data)
+    protected override void Awake()
     {
-        this.m_Data = data;
+        if (CanClick)
+        {
+            UIEventListener.Bind(gameObject).OnPointerClick = OnClick;
+        }
+    }
+
+    protected override void OnDestroy()
+    {
+        UIEventListener.Clear(gameObject);
+        m_Data = null;
+    }
+
+    public void SetData(ItemDataBase data, int index)
+    {
+        m_Data = data;
+        Index = index;
         OnDataRefresh();
     }
 
@@ -41,26 +58,38 @@ public class UIListItemRender : UIBehaviour
 
     public T GetData<T>() where T : ItemDataBase 
     {
-        if (!(this.m_Data is T))
+        if (!(m_Data is T))
             throw new Exception($"数据类型 {m_Data.GetType()} 不匹配 {typeof(T)}");
 
-        return this.m_Data as T;
+        return m_Data as T;
     }
 
-    public virtual void SetSelected(bool value)
+    protected virtual void OnClick(PointerEventData data)
     {
-        //Debug.Log($"set select status : index  {Index}  status  {value}");
+        m_ListScrollRect.SetSelect(Index);
     }
 
-    protected override void OnDestroy()
+    public void SetSelected(UIListItemSelectStatus status)
     {
-        this.m_Data = null;
+        if (status == selectedStatus) return;
+
+        if (status != UIListItemSelectStatus.None)
+            OnSelected(UIListItemSelectStatus.Selected == status);
     }
 
-    public virtual UIListItemRender Clone()
+    protected virtual void OnSelected(bool value)
     {
-        var obj = GameObject.Instantiate(gameObject);
+        if (SelectedShowObj != null)
+            SelectedShowObj?.SetActive(value);
+        if(UnselectedShowObj != null)
+            UnselectedShowObj?.SetActive(!value);
+    }
+
+    public virtual UIListItemRender Clone(UIListScrollRect scrollRect)
+    {
+        var obj = Instantiate(gameObject);
         UIListItemRender item = obj.GetComponent<UIListItemRender>();
+        item.m_ListScrollRect = scrollRect;
         return item;
     }
 

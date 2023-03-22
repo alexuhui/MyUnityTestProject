@@ -46,9 +46,9 @@ public class UIListLayout_Horizontal : UIListLayout
         m_RealPadding = this.GetRealPaddingHorizontalEx(startIndex, endIndex);
     }
 
-    public override Vector2 GetAnchor()
+    public override Vector2 GetAnchor(bool isMirror)
     {
-        return this.GetAnchorHorizontalEx();
+        return this.GetAnchorHorizontalEx(isMirror);
     }
 
     public override void UpdateItemSize(int startIndex, int endIndex)

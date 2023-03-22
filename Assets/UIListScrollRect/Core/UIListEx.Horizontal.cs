@@ -97,9 +97,9 @@ public static partial class UIListEx
         return padding;
     }
 
-    public static Vector2 GetAnchorHorizontalEx<T>(this T layout) where T : UIListLayout
+    public static Vector2 GetAnchorHorizontalEx<T>(this T layout, bool isMirror) where T : UIListLayout
     {
-        return layout.m_IsMirror ? new Vector2(1, 1) : new Vector2(0, 1);
+        return isMirror ? new Vector2(1, 1) : new Vector2(0, 1);
     }
 
     public static void ResetPosHorizontalEx<T>(this T layout) where T : UIListLayout

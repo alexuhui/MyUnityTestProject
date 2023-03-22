@@ -267,7 +267,7 @@ public class UIListScrollRect : ScrollRect
 
                 UIListItemRender render = m_ItemInfos[m_SelectedIndex].render;
                 if (!m_IsInvalid && render)
-                    render.SetSelected(true);
+                    render.SetSelected(UIListItemSelectStatus.Selected);
             }
             else if (index < 0)
                 m_SelectedIndex = -1;
@@ -278,7 +278,7 @@ public class UIListScrollRect : ScrollRect
                 {
                     UIListItemRender render = m_ItemInfos[oldIndex].render;
                     if (render)
-                        render.SetSelected(false);
+                        render.SetSelected(UIListItemSelectStatus.Unselected);
                 }
             }
         }
@@ -319,10 +319,10 @@ public class UIListScrollRect : ScrollRect
 
     private UIListItemRender CreateItem()
     {
-        UIListItemRender render = ItemPrefab.Clone();
+        UIListItemRender render = ItemPrefab.Clone(this);
         render.rectTransform.pivot = 
             render.rectTransform.anchorMin = 
-            render.rectTransform.anchorMax = m_ListLayout.GetAnchor();
+            render.rectTransform.anchorMax = m_ListLayout.GetAnchor(m_IsMirror);
 
         render.rectTransform.SetParent(content);
         render.rectTransform.localScale = Vector3.one;
@@ -374,13 +374,17 @@ public class UIListScrollRect : ScrollRect
                 render.name = i.ToString();
                 m_ItemInfos[i].render = render;
 
-                render.SetData(m_Datas[i]);
-                render.SetSelected(m_SelectedIndex == i);
+                render.SetData(m_Datas[i], i);
+                render.SetSelected(m_SelectedIndex == i ? 
+                    UIListItemSelectStatus.Selected : 
+                    UIListItemSelectStatus.Unselected);
             }
             else if (m_IsInvalid || i < m_StartIndex || i > m_EndIndex)
             {
-                render.SetData(m_Datas[i]);
-                render.SetSelected(m_SelectedIndex == i);
+                render.SetData(m_Datas[i], i);
+                render.SetSelected(m_SelectedIndex == i ?
+                    UIListItemSelectStatus.Selected :
+                    UIListItemSelectStatus.Unselected);
             }
         }
     }
@@ -428,11 +432,6 @@ public class UIListScrollRect : ScrollRect
         }
     }
 
-    private void OnClickItem(GameObject obj, PointerEventData eventData)
-    {
-        SetSelect(obj.GetComponent<UIListItemRender>().Index);
-    }
-
 #if UNITY_EDITOR
     private UIListViewLayout? previewLayout;
     [ContextMenu("Preview")]
@@ -440,14 +439,7 @@ public class UIListScrollRect : ScrollRect
     {
         if (Application.isPlaying || !content)
             return;
-
-       if (previewLayout == null || previewLayout != m_Layout)
-        {
-            previewLayout = m_Layout;
-            SetLayout();
-        }
-        InitLayout();
-
+        ChangeProp();
         m_ListLayout.Preview();
     }
 
@@ -456,9 +448,24 @@ public class UIListScrollRect : ScrollRect
         base.OnValidate();
 
         if (Application.isPlaying)
+        {
+            ChangeProp();
             Invalidate();
+        }
         else
+        {
             Preview();
+        }
+    }
+
+    private void ChangeProp()
+    {
+        if (previewLayout == null || previewLayout != m_Layout)
+        {
+            previewLayout = m_Layout;
+            SetLayout();
+        }
+        InitLayout();
     }
 #endif
 }

@@ -8,39 +8,45 @@ using UnityEngine;
 [CustomEditor(typeof(UIListScrollRect), true)]
 public class UIListViewEditor : ScrollRectEditor
 {
-    SerializedProperty itemPrefab;
-    SerializedProperty layout;
-    SerializedProperty padding;
-    SerializedProperty bIsMirror;
-    SerializedProperty colCount;
-    SerializedProperty spacing;
+    SerializedProperty m_ItemPrefab;
+    SerializedProperty m_Layout;
+    SerializedProperty m_Padding;
+    SerializedProperty m_isMirror;
+    SerializedProperty m_ColCount;
+    SerializedProperty m_Spacing;
 
-    UIListScrollRect listView;
+    UIListScrollRect m_ListView;
 
     protected override void OnEnable()
     {
         base.OnEnable();
 
-        itemPrefab = serializedObject.FindProperty("ItemPrefab");
-        layout = serializedObject.FindProperty("m_Layout");
-        padding = serializedObject.FindProperty("m_Padding");
-        spacing = serializedObject.FindProperty("m_Spacing");
-        bIsMirror = serializedObject.FindProperty("m_IsMirror");
-        colCount = serializedObject.FindProperty("m_ColCount");
+        m_ItemPrefab = serializedObject.FindProperty("ItemPrefab");
+        m_Layout = serializedObject.FindProperty("m_Layout");
+        m_Padding = serializedObject.FindProperty("m_Padding");
+        m_Spacing = serializedObject.FindProperty("m_Spacing");
+        m_isMirror = serializedObject.FindProperty("m_IsMirror");
+        m_ColCount = serializedObject.FindProperty("m_ColCount");
 
-        listView = target as UIListScrollRect;
+        m_ListView = target as UIListScrollRect;
     }
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
 
-        EditorGUILayout.PropertyField(itemPrefab);
-        EditorGUILayout.PropertyField(layout);
-        EditorGUILayout.PropertyField(padding);
-        EditorGUILayout.PropertyField(bIsMirror);
-        EditorGUILayout.PropertyField(colCount);
-        EditorGUILayout.PropertyField(spacing);
+        EditorGUILayout.PropertyField(m_ItemPrefab);
+        EditorGUILayout.PropertyField(m_Layout);
+        EditorGUILayout.PropertyField(m_Padding);
+
+        if(m_Layout.enumValueIndex == (int)UIListViewLayout.Horizontal ||
+            m_Layout.enumValueIndex == (int)UIListViewLayout.Vertical)
+        {
+            EditorGUILayout.PropertyField(m_isMirror);
+        }
+       
+        EditorGUILayout.PropertyField(m_ColCount);
+        EditorGUILayout.PropertyField(m_Spacing);
         EditorGUILayout.Space(15);
 
 
@@ -50,7 +56,7 @@ public class UIListViewEditor : ScrollRectEditor
 
         if (GUI.changed)
         {
-            listView.Preview();
+            m_ListView.Preview();
         }
     }
 }

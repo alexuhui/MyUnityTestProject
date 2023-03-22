@@ -32,7 +32,7 @@ public abstract class UIListLayout
     public abstract void ScrollToItem(int index);
     public abstract (int, int) GetShowIndex();
     public abstract void SetRealPadding(int startIndex, int endIndex);
-    public abstract Vector2 GetAnchor();
+    public abstract Vector2 GetAnchor(bool isMirror);
     public virtual void UpdateItemSize(int startIndex, int endIndex) { }
     public abstract void ResetContentPos();
     public abstract void RefreshContentPos(int startIndex, int endIndex);
