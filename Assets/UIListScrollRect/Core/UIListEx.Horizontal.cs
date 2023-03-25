@@ -5,10 +5,10 @@ using UnityEngine;
 public static partial class UIListEx
 {
     public static (bool, bool) InitContentHorizontalEx<T>(this T horizontalLayout, RectTransform content,
-       bool isMirror = false) where T : UIListLayout
+       bool isMirror = false, bool notDrag = false) where T : UIListLayout
     {
         bool vertical = false;
-        bool horizontal = true;
+        bool horizontal = true && !notDrag;
         if (isMirror)
         {
             content.anchorMin = new Vector2(1, content.anchorMin.y);

@@ -9,10 +9,10 @@ public class UIListLayout_Horizontal : UIListLayout
         List<UIListItemInfo> itemInfos, RectOffset padding,
         Vector2 spacing, List<ItemDataBase> dataList,
         int colCnt, Vector2 defSize,
-        bool isMirror = false)
+        bool isMirror = false, bool notDrag = false)
     {
-        this.InitContentEx(content, viewRect, itemInfos, padding, spacing, dataList, colCnt, defSize, isMirror);
-        return this.InitContentHorizontalEx(content, isMirror);
+        this.InitContentEx(content, viewRect, itemInfos, padding, spacing, dataList, colCnt, defSize, isMirror, notDrag);
+        return this.InitContentHorizontalEx(content, isMirror, notDrag);
     }
 
     public override float GetStartCorner()
