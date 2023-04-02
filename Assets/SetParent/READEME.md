@@ -1,5 +1,5 @@
 
-##Set Parent 第二个参数
+## Set Parent 第二个参数
 
 worldPositionStays   如果为 true，则修改相对于父级的位置、缩放和旋转，使对象保持与之前相同的世界空间位置、旋转和缩放。 </br>
 
