@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class TransformTest : MonoBehaviour
@@ -37,6 +38,8 @@ public class TransformTest : MonoBehaviour
     [ContextMenu("TransTest")]
     public void TransTest()
     {
+        Debug.Log("=========================================");
+
         beforePos.SetVector(position, "pos");
         beforeRot.SetVector(rotation, "rot");
         beforeScale.SetVector(scale, "scale");
@@ -47,15 +50,16 @@ public class TransformTest : MonoBehaviour
         var matrix = Matrix4x4.TRS(position, Quaternion.Euler(rotation), scale);
         matrixText.SetMatrix(matrix, "matrix");
 
-        afterPos.SetVector(matrix.GetPosition(), "pos from mat");
-        afterRot.SetVector(matrix.rotation.eulerAngles, "rot from mat");
-        afterScale.SetVector(matrix.lossyScale, "scale from mat");
+        // 通过unity api 计算
+        afterPos.SetVector(matrix.GetPosition(), "pos by unity api");
+        afterRot.SetVector(matrix.rotation.eulerAngles, "rot by unity api");
+        afterScale.SetVector(matrix.lossyScale, "scale by unity api");
 
         after.localEulerAngles = matrix.rotation.eulerAngles;
         after.localScale = matrix.lossyScale;
 
 
-        // 2d 方式计算
+        // 自己计算
         float a = matrix.m00, c = matrix.m01;
         float b = matrix.m10, d = matrix.m11;
         float tx = position.x;
@@ -70,16 +74,59 @@ public class TransformTest : MonoBehaviour
         matrix2.m00 = a; matrix2.m01 = c;
         matrix2.m10 = b; matrix2.m11 = d;
 
-        var _2dpos = new Vector2(tx, ty);
-        var _2drot = matrix2.rotation;
-        var _2dscale = matrix2.lossyScale;
+        //基向量
+        Vector3 vecX = new Vector3(1, 0, 0);
+        Vector3 vecY = new Vector3(0, 1, 0);
+        //变换后基向量
+        Vector3 vecTx = matrix2.MultiplyPoint(vecX);
+        Vector3 vecTy = matrix2.MultiplyPoint(vecY);
 
-        v2dPos.SetVector(_2dpos, "2d pos");
-        v2dRot.SetVector(_2drot.eulerAngles, "2d rot");
-        v2dScale.SetVector(_2dscale, "2d scale");
+        Debug.Log($"vecTx {vecTx.magnitude}   vecTy  {vecTy.magnitude}");
+        // 缩放
+        var cross1 = Vector3.Cross(vecX, vecY);
+        var cross2 = Vector3.Cross(vecTx, vecTy);
+        float scaleSign = cross1.z * cross2.z >= 0 ? 1 : -1;
+        Debug.Log($"scaleSign {scaleSign}");
 
-        t2d.localEulerAngles = _2drot.eulerAngles;
-        t2d.localScale = _2dscale;
+        //旋转
+        var angle = Vector2.Angle(vecX, vecTx);
+        var crossX = Vector3.Cross(vecX, vecTx);
+        var crossY = Vector3.Cross(vecY, vecTy);
+        float realAngle;
+        if (crossY.z < 0)
+            if (crossX.z > 0)
+                realAngle = angle + 180;
+            else
+                realAngle = 360 - angle;
+        else if (crossX.z < 0)
+            realAngle = 180 - angle;
+        else
+            realAngle = angle;
 
+        Debug.Log($"angle {angle}  crossX {crossX} crossY {crossY} realAngle  {realAngle}");
+
+        var pos2 = new Vector3(tx, ty, 0);
+        var scale2 = new Vector3(scaleSign * vecTx.magnitude, vecTy.magnitude, 0);
+        var rot2 = new Vector3(0, 0, realAngle);
+
+        v2dPos.SetVector(pos2, "pos");
+        v2dRot.SetVector(rot2, "rot");
+        v2dScale.SetVector(scale2, "scale");
+
+        t2d.localEulerAngles = rot2;
+        t2d.localScale = scale2;
     }
+
+
+    //[Space(10)]
+    //public Vector3 CrossV1;
+    //public Vector3 CrossV2;
+    //[ContextMenu("TestCross")]
+    //public void TestCross()
+    //{
+    //    var cross = Vector3.Cross(CrossV1, CrossV2);
+    //    var angle = Vector3.Angle(CrossV1, CrossV2);
+    //    var realAngle = cross.z > 0 ? angle : 360 - angle;
+    //    Debug.Log($"test : {CrossV1} cross {CrossV2}  = {cross}     angle = {realAngle}");
+    //}
 }
