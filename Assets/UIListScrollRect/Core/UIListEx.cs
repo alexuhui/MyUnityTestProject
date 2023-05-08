@@ -8,7 +8,7 @@ public static partial class UIListEx
         List<UIListItemInfo> itemInfos, RectOffset padding,
         Vector2 spacing, List<ItemDataBase> dataList,
         int colCnt, Vector2 defSize,
-        bool isMirror = false) where T : UIListLayout
+        bool isMirror = false, bool notDrag = false) where T : UIListLayout
     {
         layout.m_Content = content;
         layout.m_ViewRect = viewRect;

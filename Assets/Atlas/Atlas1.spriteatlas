@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Atlas1
+  serializedVersion: 2
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 03eaa45018e46f547ab00956e28c6717, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 2e3e7dc011a85b743826e55324ab7a60, type: 3}
+  - {fileID: 21300000, guid: c5ed5ec1d813cbc41a19a0ceba56eed0, type: 3}
+  - {fileID: 21300000, guid: 787fab05129e1d1439ace722f99c9df4, type: 3}
+  - {fileID: 21300000, guid: de7b7818f15a62a4dabc055c1cbd4c7a, type: 3}
+  - {fileID: 21300000, guid: 0aedc25ba28579c449d544f5ba900c95, type: 3}
+  - {fileID: 21300000, guid: 0e3b4c7c3278f2b4d9ed06fbd88a6ad1, type: 3}
+  - {fileID: 21300000, guid: 90542e2d06d6c344a98306da72d7bd17, type: 3}
+  - {fileID: 21300000, guid: 26e2300e798260c4f809f1b28ecfbdd0, type: 3}
+  - {fileID: 21300000, guid: ca664a1f44bed5c4fadac9a432aa9ca3, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - bg_btn_pk
+  - bg_info_other
+  - bg_main
+  - bg_countdown
+  - bg_btn
+  - bg_info_self
+  - bg_num
+  - bg_discount
+  - bg_bt_lottery
+  m_RenderDataMap: {}
+  m_Tag: Atlas1
+  m_IsVariant: 0
+  m_IsPlaceholder: 0

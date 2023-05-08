@@ -12,6 +12,7 @@ public class UIListViewEditor : ScrollRectEditor
     SerializedProperty m_Layout;
     SerializedProperty m_Padding;
     SerializedProperty m_isMirror;
+    SerializedProperty m_NotDrag;
     SerializedProperty m_ColCount;
     SerializedProperty m_Spacing;
 
@@ -26,6 +27,7 @@ public class UIListViewEditor : ScrollRectEditor
         m_Padding = serializedObject.FindProperty("m_Padding");
         m_Spacing = serializedObject.FindProperty("m_Spacing");
         m_isMirror = serializedObject.FindProperty("m_IsMirror");
+        m_NotDrag = serializedObject.FindProperty("m_NotDrag");
         m_ColCount = serializedObject.FindProperty("m_ColCount");
 
         m_ListView = target as UIListScrollRect;
@@ -44,7 +46,9 @@ public class UIListViewEditor : ScrollRectEditor
         {
             EditorGUILayout.PropertyField(m_isMirror);
         }
-       
+
+        EditorGUILayout.PropertyField(m_NotDrag);
+
         EditorGUILayout.PropertyField(m_ColCount);
         EditorGUILayout.PropertyField(m_Spacing);
         EditorGUILayout.Space(15);

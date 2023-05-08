@@ -24,7 +24,7 @@ public abstract class UIListLayout
         List<UIListItemInfo> itemInfos, RectOffset padding,
         Vector2 spacing, List<ItemDataBase> dataList,
         int colCnt, Vector2 defSize,
-        bool isMirror = false);
+        bool isMirror = false, bool notDrag = false);
 
     public abstract float GetStartCorner();
     public abstract int GetColumnCount();

@@ -16,6 +16,8 @@ public class UIListScrollRect : ScrollRect
     private int m_ColCount = 2;
     [SerializeField]
     private bool m_IsMirror;
+    [SerializeField]
+    private bool m_NotDrag = false;
     private int m_SelectedIndex = -1;
     private bool m_IsInit;
     private bool m_IsInvalid;
@@ -150,7 +152,7 @@ public class UIListScrollRect : ScrollRect
 
     private void InitLayout()
     {
-        (vertical, horizontal) = m_ListLayout.InitLayout(content, viewRect, m_ItemInfos, m_Padding, m_Spacing, m_Datas, m_ColCount, DefSize, m_IsMirror);
+        (vertical, horizontal) = m_ListLayout.InitLayout(content, viewRect, m_ItemInfos, m_Padding, m_Spacing, m_Datas, m_ColCount, DefSize, m_IsMirror, m_NotDrag);
     }
 
     private void OnScrollRectValueChange(Vector2 call)

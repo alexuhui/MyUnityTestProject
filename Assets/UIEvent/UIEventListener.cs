@@ -104,6 +104,22 @@ public class UIEventListener : MonoBehaviour
             return m_OnPointerUp;
         }
     }
+
+    private Action m_OnClick;
+    public Action OnClick
+    {
+        set
+        {
+            m_OnClick = value;
+            GetOrCreateComponent<PointerClickHandler>(gameObject).owner = this;
+        }
+        get
+        {
+            GetOrCreateComponent<PointerClickHandler>(gameObject).owner = this;
+            return m_OnClick;
+        }
+    }
+
     private PointerEventDelegate m_OnPointerClick;
     public PointerEventDelegate OnPointerClick
     {
@@ -116,6 +132,21 @@ public class UIEventListener : MonoBehaviour
         {
             GetOrCreateComponent<PointerClickHandler>(gameObject).owner = this;
             return m_OnPointerClick;
+        }
+    }
+
+    private Action m_OnHoleClick;
+    public Action OnHoleClick
+    {
+        set
+        {
+            m_OnHoleClick = value;
+            GetOrCreateComponent<PointerHoleClickHandler>(gameObject).owner = this;
+        }
+        get
+        {
+            GetOrCreateComponent<PointerHoleClickHandler>(gameObject).owner = this;
+            return m_OnHoleClick;
         }
     }
 
@@ -357,6 +388,7 @@ public class UIEventListener : MonoBehaviour
         listener.m_OnDrop = null;
         listener.m_OnPointerDown = null;
         listener.m_OnPointerUp = null;
+        listener.m_OnClick = null;
         listener.m_OnPointerClick = null;
         listener.m_OnSelect = null;
         listener.m_OnDeselect = null;
@@ -386,6 +418,7 @@ public class UIEventListener : MonoBehaviour
         m_OnDrag = null;
         m_OnDrop = null;
         m_OnPointerDown = null;
+        m_OnClick = null;
         m_OnPointerUp = null;
         m_OnPointerClick = null;
         m_OnSelect = null;
@@ -405,7 +438,7 @@ public class UIEventListener : MonoBehaviour
 
     public class PointerEnterHandler : MonoBehaviour, IPointerEnterHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnPointerEnter(PointerEventData eventData)
         {
@@ -414,10 +447,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class PointerExitHandler : MonoBehaviour, IPointerExitHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnPointerExit(PointerEventData eventData)
         {
@@ -426,10 +459,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class PointerDownHandler : MonoBehaviour, IPointerDownHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnPointerDown(PointerEventData eventData)
         {
@@ -439,10 +472,10 @@ public class UIEventListener : MonoBehaviour
     }
 
 
-  
+
     public class PointerUpHandler : MonoBehaviour, IPointerUpHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnPointerUp(PointerEventData eventData)
         {
@@ -451,39 +484,37 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class PointerClickHandler : MonoBehaviour, IPointerClickHandler
     {
-        [HideInInspector]public UIEventListener owner;
-
-        private void Awake()
-        {
-
-        }
-
+        [HideInInspector] public UIEventListener owner;
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (owner.OnPointerClick != null)
                 owner.OnPointerClick(gameObject, eventData);
+            if (owner.OnClick != null)
+                owner.OnClick();
         }
     }
 
-  
+
     public class PointerHoleClickHandler : MonoBehaviour, IPointerClickHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
         public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (owner.OnPointerHoleClick != null)
                 owner.OnPointerHoleClick(gameObject, eventData);
+            if (owner.OnHoleClick != null)
+                owner.OnHoleClick();
             owner.HoleHandler(eventData, ExecuteEvents.pointerClickHandler);
         }
     }
 
-  
+
     public class PointerDoubleClickHandler : MonoBehaviour, IPointerClickHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
         public static float limitTime = 0.35f;
         private float countDown = 0;
         private int clickCnt = 0;
@@ -522,10 +553,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class InitializePotentialDragHandler : MonoBehaviour, IInitializePotentialDragHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnInitializePotentialDrag(PointerEventData eventData)
         {
@@ -534,10 +565,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class BeginDragHandler : MonoBehaviour, IBeginDragHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnBeginDrag(PointerEventData eventData)
         {
@@ -546,10 +577,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class EndDragHandler : MonoBehaviour, IEndDragHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnEndDrag(PointerEventData eventData)
         {
@@ -558,10 +589,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class DragHandler : MonoBehaviour, IDragHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnDrag(PointerEventData eventData)
         {
@@ -570,10 +601,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class DropHandler : MonoBehaviour, IDropHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnDrop(PointerEventData eventData)
         {
@@ -582,10 +613,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class ScrollHandler : MonoBehaviour, IScrollHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnScroll(PointerEventData eventData)
         {
@@ -594,10 +625,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class UpdateSelectedHandler : MonoBehaviour, IUpdateSelectedHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnUpdateSelected(BaseEventData eventData)
         {
@@ -606,10 +637,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class SelectHandler : MonoBehaviour, ISelectHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnSelect(BaseEventData eventData)
         {
@@ -618,10 +649,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class DeselectHandler : MonoBehaviour, IDeselectHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnDeselect(BaseEventData eventData)
         {
@@ -631,10 +662,10 @@ public class UIEventListener : MonoBehaviour
 
     }
 
-  
+
     public class MoveHandler : MonoBehaviour, IMoveHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnMove(AxisEventData eventData)
         {
@@ -644,10 +675,10 @@ public class UIEventListener : MonoBehaviour
 
     }
 
-  
+
     public class SubmitHandler : MonoBehaviour, ISubmitHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnSubmit(BaseEventData eventData)
         {
@@ -657,10 +688,10 @@ public class UIEventListener : MonoBehaviour
 
     }
 
-  
+
     public class CancelHandler : MonoBehaviour, ICancelHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         public virtual void OnCancel(BaseEventData eventData)
         {
@@ -670,10 +701,10 @@ public class UIEventListener : MonoBehaviour
 
     }
 
-  
+
     public class PressHandler : MonoBehaviour, IPointerExitHandler, IPointerUpHandler, IPointerDownHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         private bool isPress = false;
         private float downTime = 0;
@@ -708,10 +739,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class LongPressHandler : MonoBehaviour, IPointerExitHandler, IPointerUpHandler, IPointerDownHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         private bool isPress = false;
         private float downTime = 0;
@@ -790,10 +821,10 @@ public class UIEventListener : MonoBehaviour
         }
     }
 
-  
+
     public class PressHandlerEx : MonoBehaviour, IPointerExitHandler, IPointerUpHandler, IPointerDownHandler
     {
-        [HideInInspector]public UIEventListener owner;
+        [HideInInspector] public UIEventListener owner;
 
         private bool isPress = false;
 

@@ -5,9 +5,9 @@ using UnityEngine;
 public static partial class UIListEx
 {
     public static (bool, bool) InitContentVerticalEx<T>(this T verticalLayout, RectTransform content,
-        bool isMirror = false) where T : UIListLayout
+        bool isMirror = false, bool notDrag = false) where T : UIListLayout
     {
-        bool vertical = true;
+        bool vertical = true && !notDrag;
         bool horizontal = false;
         if (isMirror)
         {
