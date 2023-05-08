@@ -82,22 +82,25 @@ public class TransformTest : MonoBehaviour
         Vector3 vecTy = matrix2.MultiplyPoint(vecY);
 
         Debug.Log($"vecTx {vecTx.magnitude}   vecTy  {vecTy.magnitude}");
-        // 缩放
-        var cross1 = Vector3.Cross(vecX, vecY);
-        var cross2 = Vector3.Cross(vecTx, vecTy);
-        float scaleSign = cross1.z * cross2.z >= 0 ? 1 : -1;
-        Debug.Log($"scaleSign {scaleSign}");
+        float scaleX = vecTx.magnitude, scaleY = vecTy.magnitude;
+
 
         //旋转
         var angle = Vector2.Angle(vecX, vecTx);
         var crossX = Vector3.Cross(vecX, vecTx);
         var crossY = Vector3.Cross(vecY, vecTy);
-        float realAngle;
-        if (crossY.z < 0)
-            if (crossX.z > 0)
-                realAngle = angle + 180;
-            else
-                realAngle = 360 - angle;
+
+        float realAngle = 0;
+        if (crossY.z * crossX.z < 0)
+        {
+            if (crossY.z < 0) 
+                scaleY = -scaleY;
+            if (crossX.z < 0)
+                scaleX = -scaleX;
+        }
+
+        if (crossY.z < 0 && crossX.z < 0)
+            realAngle = 360 - angle;
         else if (crossX.z < 0)
             realAngle = 180 - angle;
         else
@@ -106,7 +109,7 @@ public class TransformTest : MonoBehaviour
         Debug.Log($"angle {angle}  crossX {crossX} crossY {crossY} realAngle  {realAngle}");
 
         var pos2 = new Vector3(tx, ty, 0);
-        var scale2 = new Vector3(scaleSign * vecTx.magnitude, vecTy.magnitude, 0);
+        var scale2 = new Vector3(scaleX, scaleY, 0);
         var rot2 = new Vector3(0, 0, realAngle);
 
         v2dPos.SetVector(pos2, "pos");
@@ -116,17 +119,4 @@ public class TransformTest : MonoBehaviour
         t2d.localEulerAngles = rot2;
         t2d.localScale = scale2;
     }
-
-
-    //[Space(10)]
-    //public Vector3 CrossV1;
-    //public Vector3 CrossV2;
-    //[ContextMenu("TestCross")]
-    //public void TestCross()
-    //{
-    //    var cross = Vector3.Cross(CrossV1, CrossV2);
-    //    var angle = Vector3.Angle(CrossV1, CrossV2);
-    //    var realAngle = cross.z > 0 ? angle : 360 - angle;
-    //    Debug.Log($"test : {CrossV1} cross {CrossV2}  = {cross}     angle = {realAngle}");
-    //}
 }
