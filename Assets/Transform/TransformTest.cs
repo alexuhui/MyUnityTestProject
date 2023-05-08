@@ -6,6 +6,7 @@ public class TransformTest : MonoBehaviour
 {
     public RectTransform before;
     public RectTransform after;
+    public RectTransform t2d;
 
 
     public VectorText beforePos;
@@ -15,6 +16,10 @@ public class TransformTest : MonoBehaviour
     public VectorText afterPos;
     public VectorText afterRot;
     public VectorText afterScale;
+
+    public VectorText v2dPos;
+    public VectorText v2dRot;
+    public VectorText v2dScale;
 
     public MatrixText matrixText;
 
@@ -48,5 +53,33 @@ public class TransformTest : MonoBehaviour
 
         after.localEulerAngles = matrix.rotation.eulerAngles;
         after.localScale = matrix.lossyScale;
+
+
+        // 2d 方式计算
+        float a = matrix.m00, c = matrix.m01;
+        float b = matrix.m10, d = matrix.m11;
+        float tx = position.x;
+        float ty = position.y;
+
+        var matrix2 = new Matrix4x4(
+                     new Vector4(0, 0, 0, 0),
+                     new Vector4(0, 0, 0, 0),
+                     new Vector4(0, 0, 0, 0),
+                     new Vector4(0, 0, 0, 1)
+                     );
+        matrix2.m00 = a; matrix2.m01 = c;
+        matrix2.m10 = b; matrix2.m11 = d;
+
+        var _2dpos = new Vector2(tx, ty);
+        var _2drot = matrix2.rotation;
+        var _2dscale = matrix2.lossyScale;
+
+        v2dPos.SetVector(_2dpos, "2d pos");
+        v2dRot.SetVector(_2drot.eulerAngles, "2d rot");
+        v2dScale.SetVector(_2dscale, "2d scale");
+
+        t2d.localEulerAngles = _2drot.eulerAngles;
+        t2d.localScale = _2dscale;
+
     }
 }
