@@ -84,29 +84,46 @@ public class TransformTest : MonoBehaviour
         Debug.Log($"vecTx {vecTx.magnitude}   vecTy  {vecTy.magnitude}");
         float scaleX = vecTx.magnitude, scaleY = vecTy.magnitude;
 
-
         //旋转
-        var angle = Vector2.Angle(vecX, vecTx);
+        var angleX = Vector2.Angle(vecX, vecTx);
+        var angleY = Vector2.Angle(vecY, vecTy);
         var crossX = Vector3.Cross(vecX, vecTx);
         var crossY = Vector3.Cross(vecY, vecTy);
 
         float realAngle = 0;
-        if (crossY.z * crossX.z < 0)
+
+        if (crossX.z == 0 && crossY.z == 0)
         {
-            if (crossY.z < 0) 
-                scaleY = -scaleY;
-            if (crossX.z < 0)
-                scaleX = -scaleX;
+            scaleX = a;
+            scaleY = d;
+
+            if (scaleX < 0 && scaleY < 0)
+                realAngle = 180 - angleX;
+            else if (scaleX < 0)
+                realAngle = angleY;
+            else
+                realAngle = angleX;
         }
-
-        if (crossY.z < 0 && crossX.z < 0)
-            realAngle = 360 - angle;
-        else if (crossX.z < 0)
-            realAngle = 180 - angle;
         else
-            realAngle = angle;
+        {
+            if (crossY.z * crossX.z < 0)
+            {
+                if (crossY.z < 0)
+                    scaleY = -scaleY;
+                if (crossX.z < 0)
+                    scaleX = -scaleX;
+            }
 
-        Debug.Log($"angle {angle}  crossX {crossX} crossY {crossY} realAngle  {realAngle}");
+            if (crossY.z < 0 && crossX.z < 0)
+                realAngle = 360 - angleX;
+            else if (crossX.z < 0)
+                realAngle = 180 - angleX;
+            else
+                realAngle = angleX;
+        }
+        
+
+        Debug.Log($"angleX {angleX}  angleY {angleY}  crossX {crossX} crossY {crossY} realAngle  {realAngle}");
 
         var pos2 = new Vector3(tx, ty, 0);
         var scale2 = new Vector3(scaleX, scaleY, 0);
