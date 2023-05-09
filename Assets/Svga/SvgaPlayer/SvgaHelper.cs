@@ -1,5 +1,5 @@
 
-//#define UNITY_API 
+#define UNITY_API 
 
 using HagoSpace.Svga;
 using System;
@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Svga;
 using System.IO.Compression;
+using System.Text;
 
 namespace HagoSpace
 {
@@ -615,34 +616,48 @@ namespace HagoSpace
             var m = frameEntity.Transform;
             if (m != null)
             {
-                m_Matrix.m00 = m.A; m_Matrix.m01 = -m.C;
-                m_Matrix.m10 = -m.B; m_Matrix.m11 = m.D;
-
                 pos = new Vector2(m.Tx, -m.Ty);
 #if UNITY_API
+                m_Matrix.m00 = m.A; m_Matrix.m01 = -m.C;
+                m_Matrix.m10 = -m.B; m_Matrix.m11 = m.D;
 
                 rot = m_Matrix.rotation;
                 scale = m_Matrix.lossyScale;
 #else
+                float[,] transMat = new float[,] {
+                    {m.A, m.B, m.Tx},
+                    {m.C, m.D, m.Ty},
+                    {0,     0,   1,},
+                };
+
+
                 //基向量
-                Vector3 vecX = new Vector3(1, 0, 0);
-                Vector3 vecY = new Vector3(0, 1, 0);
+                float[,] vecX = {
+                    { 1 },
+                    { 0 },
+                    { 0 },
+                };
+                float[,] vecY = {
+                    { 0 },
+                    { 1 },
+                    { 0 },
+                };
                 //变换后基向量
-                Vector3 vecTx = m_Matrix.MultiplyPoint(vecX);
-                Vector3 vecTy = m_Matrix.MultiplyPoint(vecY);
+                float[,] vecTx = Multiply(transMat, vecX);
+                float[,] vecTy = Multiply(transMat, vecY);
 
                 Debug.Log("==================================");
-                Debug.Log($"vecTx {vecTx.magnitude}   vecTy  {vecTy.magnitude}");
-                float scaleX = vecTx.magnitude, scaleY = vecTy.magnitude;
+                float scaleX = GetMagnitude(vecTx), scaleY = GetMagnitude(vecTy);
+                Debug.Log($"scaleX {scaleX}   scaleY  {scaleY}");
 
                 //旋转
-                var angleX = Vector2.Angle(vecX, vecTx);
-                var angleY = Vector2.Angle(vecY, vecTy);
-                var crossX = Vector3.Cross(vecX, vecTx);
-                var crossY = Vector3.Cross(vecY, vecTy);
+                var angleX = GetAngle(vecX, vecTx);
+                var angleY = GetAngle(vecY, vecTy);
+                var crossX = Cross(vecX, vecTx);
+                var crossY = Cross(vecY, vecTy);
 
                 float realAngle = 0;
-                if (crossX.z == 0 && crossY.z == 0)
+                if (crossX == 0 && crossY == 0)
                 {
                     scaleX = m.A;
                     scaleY = m.D;
@@ -656,17 +671,17 @@ namespace HagoSpace
                 }
                 else
                 {
-                    if (crossY.z * crossX.z < 0)
+                    if (crossY * crossX < 0)
                     {
-                        if (crossY.z < 0)
+                        if (crossY < 0)
                             scaleY = -scaleY;
-                        if (crossX.z < 0)
+                        if (crossX < 0)
                             scaleX = -scaleX;
                     }
 
-                    if (crossY.z < 0 && crossX.z < 0)
+                    if (crossY < 0 && crossX < 0)
                         realAngle = 360 - angleX;
-                    else if (crossX.z < 0)
+                    else if (crossX < 0)
                         realAngle = 180 - angleX;
                     else
                         realAngle = angleX;
@@ -684,6 +699,81 @@ namespace HagoSpace
             rot = Quaternion.identity;
             scale = Vector3.one;
             return false;
+        }
+
+
+        private float Cross(float[,] v1, float[,] v2)
+        {
+            return v1[0, 0] * v2[1, 0] - v1[1, 0] * v2[0, 0];
+        }
+
+        private float GetAngle(float[,] v1, float[,] v2)
+        {
+            return Vector2.Angle(new Vector2(v1[0, 0], v1[1, 0]), new Vector2(v2[0, 0], v2[1, 0]));
+        }
+
+        private float GetMagnitude(float[,] v1)
+        {
+            var row = v1.GetLength(0);
+            float sum = 0;
+            for(int i = 0; i < row; i ++)
+            {
+                sum += Mathf.Pow(v1[i, 0], 2);
+            }
+            return Mathf.Sqrt(sum);
+        }
+
+        private string PrintArray(float[,] arr)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                StringBuilder rowSb = new StringBuilder();
+                for (int j = 0; j < arr.GetLength(1); j++)
+                {
+                    rowSb.Append(arr[i, j]);
+                    if (j < arr.GetLength(1) - 1)
+                        rowSb.Append(",  ");
+                }
+                sb.Append($"{{{rowSb}}}");
+                if (i < arr.GetLength(0))
+                    sb.Append(",  ");
+            }
+            return sb.ToString();
+        }
+
+        public static float[,] Multiply(float[,] m1, float[,] m2)
+        {
+            // Verify that matrices are compatible
+            var columns1 = m1.GetLength(1);
+            var rows2 = m2.GetLength(0);
+            if (columns1 != rows2)
+            {
+                throw new Exception(string.Format("Can't multiply a {0}x{1} matrix with a {2}x{3} matrix!",
+                                                  m1.GetLength(0), m1.GetLength(1),
+                                                  m2.GetLength(0), m2.GetLength(1)));
+            }
+
+            var prodRows = m1.GetLength(0); // rows from m1
+            var prodCols = m2.GetLength(1); // columns from m2
+            var m = new float[prodRows, prodCols];
+
+            // Select destination row
+            for (var r = 0; r < prodRows; r++)
+            {
+                // Select destination column
+                for (var c = 0; c < prodCols; c++)
+                {
+                    m[r, c] = 0;
+
+                    for (var i = 0; i < columns1; i++)
+                    {
+                        m[r, c] += m1[r, i] * m2[i, c];
+                    }
+                }
+            }
+
+            return m;
         }
     }
 }
